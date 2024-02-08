@@ -4,6 +4,7 @@ const nextConfig = {
         formats: ['image/webp'],
         domains: [
             "127.0.0.1",
+            "localhost",
             process.env.NEXT_PUBLIC_BACKEND_URL,
         ],
     },

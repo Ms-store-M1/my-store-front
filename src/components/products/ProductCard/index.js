@@ -9,7 +9,7 @@ const Index = ({ product }) => {
                     <Image
                         className="group-hover/thumbnail:opacity-100 group-hover/thumbnail:scale-105 transition ease-in-out delay-150"
                         alt={product.name}
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${product.thumbnail}`}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL_2}/${product.thumbnail}`}
                         fill
                         sizes="100%"
                         style={{ objectFit: "cover" }}
@@ -17,7 +17,7 @@ const Index = ({ product }) => {
                     <Image
                         className="opacity-100 group-hover/thumbnail:scale-105 group-hover/thumbnail:opacity-0 transition ease-in-out delay-150"
                         alt={product.name}
-                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${product.packshot}`}
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL_2}/${product.packshot}`}
                         fill
                         sizes="100%"
                         style={{ objectFit: "cover" }}
