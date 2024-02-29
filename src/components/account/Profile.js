@@ -61,7 +61,7 @@ const Profile = ({accountInfo}) => {
     <div className="p-4">
       {!isEditing ? (
         <>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">monprofil.</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Mon profil</h2>
         <ul className="list-disc list-inside bg-white rounded-lg p-4 shadow-md mb-4">
         {Object.entries(userInfo).filter(([key]) => key !== 'id' && key !== 'isadmin' && key !== 'password').map(([key, value]) => (
           <li key={key} className="border-b border-gray-200 py-2">

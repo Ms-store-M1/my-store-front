@@ -34,6 +34,19 @@ export async function loginUser(user) {
     }
 }
 
+export async function fetchUsers() {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+            cache: "no-store",
+        });
+        const data = await res.json();
+        return data;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
 export async function getUser(id) {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${id}`, {
