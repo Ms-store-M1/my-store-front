@@ -34,7 +34,7 @@ export async function loginUser(user) {
     }
 }
 
-export async function fetchUsers() {
+export async function fetchUsers(id) {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
             cache: "no-store",
@@ -80,14 +80,14 @@ export async function updateUser(user) {
 
 export async function deleteUser(id) {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/delete/${id}`, {
             method: "DELETE",
             cache: "no-store",
         });
         const data = await res.json();
+        console.log("Delete user response:", data); // Vérifie la réponse du backend dans la console
         return data;
-    }
-    catch (err) {
+    } catch (err) {
         return err;
     }
 }
