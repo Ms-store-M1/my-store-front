@@ -9,7 +9,7 @@ export default async function Page({
     searchParams,
 }) {
     //const isAdmin = checkIfUserIsAdmin(context);
-    const isAdmin = true;
+    const isAdmin = false;
     const { take = 8 } = searchParams || {};
 
     const products = await getProducts(take);

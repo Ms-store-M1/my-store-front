@@ -12,7 +12,7 @@ import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
 
-export default function Page({ onDelete, isAdmin = true }) {
+export default function Page({ onDelete, isAdmin = false }) {
     const { id } = useParams();
     const [selectedImage, setSelectedImage] = useState(null);
     const [placehodlerImage, setPlaceholderImage] = useState(null);
