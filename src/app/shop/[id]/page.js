@@ -86,7 +86,7 @@ export default function Page({ onDelete, isAdmin = true }) {
                 )
             }
             {
-                (!isAdmin && !product.active) || !product && (
+                (!isAdmin && !isActive) || !product && (
                     <Alert message="No products found" type="error" />
                 )
             }
