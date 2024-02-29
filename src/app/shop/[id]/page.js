@@ -9,8 +9,9 @@ import ProductFancyBox from "@/components/products/ProductFancyBox";
 import Loader from "@/components/UI/Loader";
 import Alert from "@/components/UI/Alert";
 import { getBase64 } from '../../../lib/base64';
+import Button from '../../../components/UI/Button';
 
-export default function Page() {
+export default function Page({ onDelete, isAdmin }) {
 
     const { id } = useParams();
     const [selectedImage, setSelectedImage] = useState(null);
@@ -20,6 +21,11 @@ export default function Page() {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
+    const [showConfirmation, setShowConfirmation] = useState(false); // State for confirmation message
+
+    //Test value
+    isAdmin = true
+
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -64,6 +70,11 @@ export default function Page() {
         setSelectedImage(slideIndex === 0 ? product.packshot : product.thumbnail);
         setSlideIndex(slideIndex === 0 ? 1 : 0);
     }
+
+    const handleDelete = () => {
+        setShowConfirmation(false); // Hide confirmation message
+        onDelete(product?.id); // Call onDelete function
+    };
 
     return (
         <div className="container mx-auto py-12">
@@ -143,6 +154,33 @@ export default function Page() {
                     <TitlePage title={product.name} />
                     <p className="mb-3 font-semibold text-lg">{product.price} €</p>
                     <p className="leading-7">{product.description}</p>
+                </div>
+                <div>
+                {isAdmin && (
+                  <>
+                    <Button
+                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
+                        onClick={() => setShowConfirmation(true)}> {/* Set showConfirmation to true */}
+                        Delete
+                    </Button>
+                    {/* Confirmation message */}
+                    {showConfirmation && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                            <div className="bg-white p-4 rounded-lg">
+                                <p>Êtes vous sûr de vouloir supprimer cet article?</p>
+                                <div className="flex justify-between mt-4">
+                                    <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onClick={handleDelete}>
+                                        Oui
+                                    </button>
+                                    <button className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300" onClick={() => setShowConfirmation(false)}>
+                                        Non
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                  </>
+                )}
                 </div>
             </div>
         </div>
