@@ -97,7 +97,7 @@ export default function Page() {
                             blurDataURL={placehodlerImage}
                             className="object-cover h-full w-full group-hover/show:scale-105 transition ease-in-out delay-150 z-1"
                             alt={product.name}
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${selectedImage}`}
+                            src={`${selectedImage}`}
                             width={500}
                             height={500}
                         />
@@ -107,7 +107,7 @@ export default function Page() {
                             <Image
                                 className="cursor-pointer object-cover h-full w-full "
                                 alt={product.name}
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${product.thumbnail}`}
+                                src={`${product.thumbnail}`}
                                 width={100}
                                 height={100}
                                 onMouseOver={() => {
@@ -124,7 +124,7 @@ export default function Page() {
                             <Image
                                 className="cursor-pointer object-cover h-full w-full"
                                 alt={product.name}
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${product.packshot}`}
+                                src={`${product.packshot}`}
                                 width={100}
                                 height={100}
                                 onMouseOver={() => {

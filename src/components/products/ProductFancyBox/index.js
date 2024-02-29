@@ -15,7 +15,7 @@ const Index = ({ img, close, prevSlide, nextSlide }) => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-      <Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${img}`} width={600} height={600} alt="app store"/>
+      <Image src={`${img}`} width={600} height={600} alt="app store"/>
       <button className="ml-8" onClick={nextSlide}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
