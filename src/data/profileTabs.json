@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Profil",
+        "id": "profile"
+    },
+    {
+        "name": "Commandes",
+        "id": "orders"
+    },
+    {
+        "name": "Wishlist",
+        "id": "wishlist"
+    }
+]
