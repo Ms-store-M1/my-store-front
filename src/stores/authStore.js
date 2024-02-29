@@ -14,6 +14,7 @@ function decodeJWT(token) {
 const useAuthStore = create((set) => ({
   isLogged: false,
   accountInfo: {},
+  isAdmin: false,
   login: (data) => set(() => ({ isLogged: true, accountInfo: data })),
   logout: () => {
     localStorage.removeItem('token');
@@ -25,10 +26,11 @@ const useAuthStore = create((set) => ({
       set(() => ({ isLogged: true }));
       const payload = decodeJWT(token);
       const userId = payload.id;
+      const isAdmin = payload.isAdmin === true;
     
       const user = await getUser(userId);
-      console.log(user);
-      set(() => ({ accountInfo: user.data }));
+      console.log("pword", user);
+      set(() => ({ isLogged: true, isAdmin: isAdmin, accountInfo: user.data }));
     }
   },
   addToWishlist: async(productId) => {
