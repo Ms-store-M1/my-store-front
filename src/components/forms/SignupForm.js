@@ -31,7 +31,7 @@ const SignupForm = ({ onSignupSuccess }) => {
       const create = createUser(formData);
       console.log(create);
       // formData.wishlist = [];
-      // onSignupSuccess(true, formData);
+      onSignupSuccess(true, formData);
     } else {
       onSignupSuccess(false, {});
     }

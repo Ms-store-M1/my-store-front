@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Button from '../UI/Button';
 import useAuthStore from '@/stores/authStore';
+import { updateUser } from '@/services/api/user.api';
 
 const Profile = ({accountInfo}) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -10,8 +11,21 @@ const Profile = ({accountInfo}) => {
   const { isLogged } = useAuthStore();
   const logout = useAuthStore(state => state.logout);
 
+  const translations = {
+    lastname: 'Nom',
+    firstname: 'Prénom',
+    mail: 'Email',
+    address: 'Adresse',
+    zipcode: 'Code postal',
+    city: 'Ville',
+    phone: 'Téléphone'
+  }
+
   useEffect(() => {
     if (accountInfo) {
+      // delete password
+      delete accountInfo.password;
+      delete accountInfo.isadmin;
       setUserInfo(accountInfo);
     }
   }, [accountInfo])
@@ -30,11 +44,12 @@ const Profile = ({accountInfo}) => {
     
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async  (e) => {
     e.preventDefault();
     setIsEditing(false);
     // Envoyer les informations mises à jour au backend
-    console.log(userInfo);
+    const req = await updateUser(userInfo);
+    console.log(req);
   };
 
   const handleCancel = () => {
@@ -48,11 +63,13 @@ const Profile = ({accountInfo}) => {
         <>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">monprofil.</h2>
         <ul className="list-disc list-inside bg-white rounded-lg p-4 shadow-md mb-4">
-          {Object.entries(userInfo).map(([key, value]) => (
-            <li key={key} className="border-b border-gray-200 py-2">
-              <span className="font-semibold capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</span> {value}
-            </li>
-          ))}
+        {Object.entries(userInfo).filter(([key]) => key !== 'id' && key !== 'isadmin' && key !== 'password').map(([key, value]) => (
+          <li key={key} className="border-b border-gray-200 py-2">
+            <span className="font-semibold capitalize">{translations[key]} :</span> {value}
+          </li>
+        ))}
+
+
         </ul>
         <div className="flex space-x-4">
           <Button onClick={() => handleEdit()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
@@ -65,22 +82,24 @@ const Profile = ({accountInfo}) => {
       </>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          {Object.keys(userInfo).map(key => (
+         {Object.keys(userInfo).filter(key => key !== 'id' && key !== 'isadmin').map(key => (
             <div key={key} className="flex flex-col">
-              <label htmlFor={key} className="mb-2 capitalize">{key}</label>
+              <label htmlFor={key} className="mb-2 capitalize">{translations[key]}</label>
               <input
-                type="text"
+                type={key === 'password' ? 'password' : 'text'}
                 id={key}
                 name={key}
                 value={userInfo[key]}
                 onChange={handleChange}
-                required
+                required={key !== 'password'} // Rendre tous les champs sauf password requis
                 className="p-2 border"
               />
             </div>
           ))}
-          <Button type="submit">Sauvegarder</Button>
-          <Button onClick={() => handleCancel()}>Annuler</Button>
+          <div className="flex space-x-4">
+            <Button className="mr" type="submit">Sauvegarder</Button>
+            <Button onClick={() => handleCancel()}>Annuler</Button>
+        </div>
         </form>
       )}
     </div>
