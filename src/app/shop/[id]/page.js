@@ -23,6 +23,7 @@ export default function Page() {
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
     const { isLogged, accountInfo, addToWishlist } = useAuthStore();
+    const [wishlisted, setWishlisted] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -70,7 +71,7 @@ export default function Page() {
 
     const onWishlist = async (productId) => {
         const req = await addToWishlist(productId);
-        console.log(req);
+        setWishlisted(true)
     }
 
     return (
@@ -154,9 +155,11 @@ export default function Page() {
                     <Button 
                         onClick={() => onWishlist(product.id)}
                         className="mt-4"
-                    >
-                        Ajouter à ma liste
+                        disabled={wishlisted}
+                        >
+                        {wishlisted ? 'Ajouté à la liste' : 'Ajouter à la liste'}
                     </Button>
+
                 </div>
             </div>
         </div>
