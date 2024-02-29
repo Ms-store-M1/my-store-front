@@ -8,7 +8,8 @@ import ProductsCounter from "@/components/products/ProductsCounter";
 export default async function Page({
     searchParams,
 }) {
-
+    //const isAdmin = checkIfUserIsAdmin(context);
+    const isAdmin = true;
     const { take = 8 } = searchParams || {};
 
     const products = await getProducts(take);
@@ -19,7 +20,7 @@ export default async function Page({
         <div className="container mx-auto">
             <TitlePage title="Shop" />
             <ProductsCounter productsLength={products.data.length} />
-            <ProductsGrid products={products.data} />
+            <ProductsGrid products={products.data} isAdmin={isAdmin} />
             <div className="flex justify-center mb-24">
                 {
                     Number(take) <= products.data.length && (
