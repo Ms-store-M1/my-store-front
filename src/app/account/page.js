@@ -1,7 +1,7 @@
 "use client";
 
 import SignupForm from "@/components/forms/SignupForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/UI/Button";
 import Profile from "@/components/account/Profile";
 import useAuthStore from "@/stores/authStore";
@@ -14,7 +14,9 @@ export default function Account() {
 
     const { isLogged, accountInfo } = useAuthStore();
     const login = useAuthStore(state => state.login);
+    const checkLogin = useAuthStore(state => state.checkLogin);
 
+    const [loading, setLoading] = useState(true);
     const [showSignup, setShowSignup] = useState(false);
     const [isSignupSuccess, setIsSignupSuccess] = useState(null);
     const [activeTab, setActiveTab] = useState('profile'); 
@@ -23,12 +25,43 @@ export default function Account() {
         setIsSignupSuccess(success);
         if (success) {
             console.log('Inscription réussie avec les données :', data);
-            // setShowSignup(false);
-            // login(data);
+            setShowSignup(false);
+            login(data);
         } else {
         }
       };
 
+    const handleLoginSuccess = (success, data) => {
+        if (success) {
+            console.log('Connexion réussie avec les données :', data);
+            login(data);
+        } else {
+        }
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        const checkLoginStatus = async () => {
+            try {
+                await checkLogin();
+            } catch (error) {
+                console.error("Erreur lors de la vérification du login :", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        checkLoginStatus();
+    }, [setLoading, checkLogin]);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p>Chargement...</p>
+            </div>
+        );
+    }
+    
     return (
         <div className="min-h-screen w-full px-2 bg-gray-50">
             <div>
@@ -76,7 +109,7 @@ export default function Account() {
                         {!showSignup ? (
                             <div>
                                 <h2 className="text-2xl font-bold">Connexion</h2>
-                                <LoginForm />
+                                <LoginForm onLoginSuccess={handleLoginSuccess} />
                                 <div className="mt-2">
                                     <p>Pas de compte ?
                                     <a className="ml-1 text-md font-normal leading-6 text-black text-base hover:text-slate-500 cursor-pointer" onClick={() => setShowSignup(true)}>Inscription</a>

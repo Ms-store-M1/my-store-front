@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import Button from '../UI/Button';
+import { loginUser } from '@/services/api/user.api';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
-    email: '',
+    mail: '',
     password: '',
   });
 
@@ -22,7 +23,11 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     if (isFormValid) {
       console.log(formData);
-      // backend...
+      const req = await loginUser(formData);
+      // check promise result
+      console.log(req);
+      // stock token in localstorage
+      localStorage.setItem('token', req.token);
       onLoginSuccess(true, formData);
     } else {
       onLoginSuccess(false, {});
@@ -34,7 +39,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex flex-col">
         <label htmlFor="email" className="mb-2">Email</label>
-        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required className="p-2 border " />
+        <input type="email" id="mail" name="mail" value={formData.mail} onChange={handleChange} placeholder="Email" required className="p-2 border " />
       </div>
       <div className="flex flex-col">
         <label htmlFor="password" className="mb-2">Mot de passe</label>

@@ -18,7 +18,7 @@ export async function createUser(user) {
 
 export async function loginUser(user) {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/login`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
             method: "POST",
             cache: "no-store",
             headers: {
