@@ -9,6 +9,8 @@ import ProductFancyBox from "@/components/products/ProductFancyBox";
 import Loader from "@/components/UI/Loader";
 import Alert from "@/components/UI/Alert";
 import { getBase64 } from '../../../lib/base64';
+import useAuthStore from '@/stores/authStore';
+import Button from '@/components/UI/Button';
 
 export default function Page() {
 
@@ -20,6 +22,7 @@ export default function Page() {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
+    const { isLogged, accountInfo, addToWishlist } = useAuthStore();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -63,6 +66,11 @@ export default function Page() {
     const goToPrevSlide = () => {
         setSelectedImage(slideIndex === 0 ? product.packshot : product.thumbnail);
         setSlideIndex(slideIndex === 0 ? 1 : 0);
+    }
+
+    const onWishlist = async (productId) => {
+        const req = await addToWishlist(productId);
+        console.log(req);
     }
 
     return (
@@ -143,6 +151,12 @@ export default function Page() {
                     <TitlePage title={product.name} />
                     <p className="mb-3 font-semibold text-lg">{product.price} €</p>
                     <p className="leading-7">{product.description}</p>
+                    <Button 
+                        onClick={() => onWishlist(product.id)}
+                        className="mt-4"
+                    >
+                        Ajouter à ma liste
+                    </Button>
                 </div>
             </div>
         </div>

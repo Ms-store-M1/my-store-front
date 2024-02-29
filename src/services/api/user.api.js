@@ -78,3 +78,17 @@ export async function deleteUser(id) {
         return err;
     }
 }
+
+export async function addToWishlist(userId, productId) {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}/wishlist/${productId}`, {
+            method: "POST",
+            cache: "no-store",
+        });
+        const data = await res.json();
+        return data;
+    }
+    catch (err) {
+        return err;
+    }
+}

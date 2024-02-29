@@ -1,4 +1,4 @@
-import { getUser } from '@/services/api/user.api';
+import { addToWishlist, getUser } from '@/services/api/user.api';
 import { create } from 'zustand';
 
 function decodeJWT(token) {
@@ -36,13 +36,9 @@ const useAuthStore = create((set) => ({
     if (token) {
       const payload = decodeJWT(token);
       const userId = payload.id;
-      const user = await getUser(userId);
-      const wishlist = user.data.wishlist;
-      const newWishlist = [...wishlist, productId];
-      const updatedUser = { ...user.data, wishlist: newWishlist };
-      const req = await updateUser(updatedUser);
+      const req = await addToWishlist(userId, productId);
       console.log(req);
-      set(() => ({ accountInfo: updatedUser }));
+      // set(() => ({ accountInfo: updatedUser }));
     }
   }
 }));
