@@ -34,6 +34,19 @@ export async function loginUser(user) {
     }
 }
 
+export async function fetchUsers(id) {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+            cache: "no-store",
+        });
+        const data = await res.json();
+        return data;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
 export async function getUser(id) {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${id}`, {
@@ -72,9 +85,9 @@ export async function deleteUser(id) {
             cache: "no-store",
         });
         const data = await res.json();
+        console.log("Delete user response:", data); // Vérifie la réponse du backend dans la console
         return data;
-    }
-    catch (err) {
+    } catch (err) {
         return err;
     }
 }
