@@ -228,7 +228,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     ) : (
                         <p className="leading-7">{product.description}</p>
                     )}
-                    <Button
+                    {isLogged ?  <Button
                         onClick={() => onWishlist(product.id)}
                         className="mt-4"
                         disabled={wishlisted}
@@ -236,7 +236,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                         {wishlisted
                             ? "Ajouté à la liste"
                             : "Ajouter à la liste"}
-                    </Button>
+                    </Button> : ""}
                 </div>
                 <div>
                     {isAdmin ? (

@@ -1,8 +1,11 @@
 import Link from "next/link";
 import NavMenu from "@/components/UI/NavMenu";
 import menu from "@/data/menu.json";
+import useAuthStore from "@/stores/authStore";
+
 
 const Index = () => {
+    const { isLogged, accountInfo, addToWishlist } = useAuthStore();
     return (
         <footer className="bg-black py-12 pl-6 pr-6">
             <div className="flex justify-between">
@@ -12,6 +15,7 @@ const Index = () => {
                     </Link>
                 </div>
                 <div className="w-[20%]">
+                    
                     <NavMenu menu={menu} color="white" />
                 </div>
             </div>

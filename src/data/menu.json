@@ -8,10 +8,6 @@
       "path": "/contact"
     },
     {
-      "name": "Administration",
-      "path": "/admin"
-    },
-    {
       "name": "Compte",
       "path": "/account"
     }
