@@ -24,6 +24,7 @@ export default function Page({ onDelete, isAdmin = true }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isActive, setIsActive] = useState(product?.active || false);
     const [editMode, setEditMode] = useState(false);
+    const [originalProduct, setOriginalProduct] = useState(null);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -80,10 +81,16 @@ export default function Page({ onDelete, isAdmin = true }) {
     };
 
     const handleEdit = () => {
-        setEditMode(true);
+        if (!editMode) {
+            // If entering edit mode, create a copy of the original product
+            setOriginalProduct(product);
+        }
+        setEditMode(!editMode); // Toggle the editMode state
     };
 
     const handleCancelEdit = () => {
+        // Revert changes by restoring the original product
+        setProduct(originalProduct);
         setEditMode(false);
     };
 
@@ -167,8 +174,27 @@ export default function Page({ onDelete, isAdmin = true }) {
                     </div>
                 </div>
                 <div className="content lg:flex-1 p-6">
-                    <TitlePage title={product.name} />
-                    <p className="mb-3 font-semibold text-lg">{product.price} €</p>
+
+                    {editMode ? (
+                        <textarea
+                            value={product.name}
+                            onChange={(e) => setProduct({ ...product, name: e.target.value })}
+                            className="w-full h-32 p-2 border rounded-md resize-none"
+                        />
+                    ) : (
+                        <TitlePage title={product.name} />
+                    )}
+
+                    {editMode ? (
+                        <textarea
+                            value={product.price}
+                            onChange={(e) => setProduct({ ...product, price: e.target.value })}
+                            className="w-full h-32 p-2 border rounded-md resize-none"
+                        />
+                    ) : (
+                        <p className="mb-3 font-semibold text-lg">{product.price} €</p>
+                    )}
+
                     {editMode ? (
                         <textarea
                             value={product.description}
@@ -200,7 +226,8 @@ export default function Page({ onDelete, isAdmin = true }) {
                             ) : (
                                 <>
                                     <Button
-                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white">
+                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
+                                        onClick={handleEdit}>
                                         Modifier
                                     </Button>
                                     <Button
