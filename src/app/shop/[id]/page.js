@@ -11,7 +11,7 @@ import Alert from "@/components/UI/Alert";
 import { getBase64 } from '../../../lib/base64';
 import Button from '../../../components/UI/Button';
 
-export default function Page({ onDelete, isAdmin }) {
+export default function Page({ onDelete, isAdmin = true }) {
 
     const { id } = useParams();
     const [selectedImage, setSelectedImage] = useState(null);
@@ -21,11 +21,8 @@ export default function Page({ onDelete, isAdmin }) {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
-    const [showConfirmation, setShowConfirmation] = useState(false); // State for confirmation message
-
-    //Test value
-    isAdmin = true
-
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [isActive, setIsActive] = useState(product?.active || false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -34,6 +31,7 @@ export default function Page({ onDelete, isAdmin }) {
                 let product = await getProduct(id);
                 if (product) {
                     setProduct(product.data);
+                    setIsActive(product.data.active);
                 }
             }
             catch (err) {
@@ -76,6 +74,10 @@ export default function Page({ onDelete, isAdmin }) {
         onDelete(product?.id); // Call onDelete function
     };
 
+    const handleCheckboxChange = () => {
+        setIsActive(!isActive); // Toggle product visibility
+    };
+
     return (
         <div className="container mx-auto py-12">
             {
@@ -84,7 +86,7 @@ export default function Page({ onDelete, isAdmin }) {
                 )
             }
             {
-                !product && (
+                (!isAdmin && !product.active) || !product && (
                     <Alert message="No products found" type="error" />
                 )
             }
@@ -161,8 +163,21 @@ export default function Page({ onDelete, isAdmin }) {
                     <Button
                         className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
                         onClick={() => setShowConfirmation(true)}> {/* Set showConfirmation to true */}
-                        Delete
+                        Supprimer
                     </Button>
+
+                    <div className="mt-4">
+                            <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                className="form-checkbox h-5 w-5 text-gray-600"
+                                checked={isActive}
+                                onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
+                            />
+                                <span className="ml-2 text-gray-700">Actif</span>
+                            </label>
+                    </div>
+
                     {/* Confirmation message */}
                     {showConfirmation && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">

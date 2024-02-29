@@ -8,7 +8,8 @@ class Index extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showConfirmation: false
+            showConfirmation: false,
+            isActive: this.props.product.active
         };
     }
 
@@ -25,12 +26,22 @@ class Index extends Component {
         this.setState({ showConfirmation: false });
     };
 
+    handleCheckboxChange = () => {
+        // Update isActive state when the checkbox is toggled
+        this.setState(prevState => ({
+            isActive: !prevState.isActive
+        }));
+    };
+
     render() {
         const { product, isAdmin } = this.props;
-        const { showConfirmation } = this.state;
+        const { showConfirmation, isActive } = this.state;
+
+        const isVisible = isAdmin || product.active;
 
         return (
-            <div className="group/card max-w-sm bg-white rounded-lg relative">
+            isVisible && (
+                <div className="group/card max-w-sm bg-white rounded-lg relative">
                 <Link className="group/thumbnail thumbnail" href={`/shop/${product.id}`}>
                     <div className="overflow-hidden w-[300px] h-[300px] relative">
                         <Image
@@ -83,7 +94,22 @@ class Index extends Component {
                         )}
                     </div>
                 </div>
-            </div>
+
+                {isAdmin && product.active !== undefined && (
+                    <div className="mt-4">
+                        <label className="inline-flex items-center">
+                            <input
+                                type="checkbox"
+                                className="form-checkbox h-5 w-5 text-gray-600"
+                                checked={isActive}
+                                onChange={this.handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
+                            />
+                            <span className="ml-2 text-gray-700">Actif</span>
+                        </label>
+                    </div>
+                )}
+              </div>
+            ) 
         );
     }
 }
