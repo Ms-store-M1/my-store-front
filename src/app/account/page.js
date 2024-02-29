@@ -8,6 +8,7 @@ import useAuthStore from "@/stores/authStore";
 import profileTabs from "@/data/profileTabs.json";
 import Wishlist from "@/components/account/Wishlist";
 import Orders from "@/components/account/Orders";
+import LoginForm from "@/components/forms/LoginForm";
 
 export default function Account() {
 
@@ -22,67 +23,80 @@ export default function Account() {
         setIsSignupSuccess(success);
         if (success) {
             console.log('Inscription réussie avec les données :', data);
-            setShowSignup(false);
-            login(data);
+            // setShowSignup(false);
+            // login(data);
         } else {
         }
       };
 
     return (
-        <div className="min-h-screen flex w-full mx-2 items-center justify-center bg-gray-50">
-             <div className="w-1/4 p-5">
-                {isLogged && (
-                <nav className="flex flex-col">
-                {profileTabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        className={`p-2 bg-transparent text-black ${activeTab === tab.id ? 'border border-black' : ''}`}
-                        onClick={() => setActiveTab(tab.id)}
-                    >
-                        {tab.name}
-                    </button>
-                ))}
-            </nav>
-                )}
+        <div className="min-h-screen w-full px-2 bg-gray-50">
+            <div>
+                <h1 className="text-3xl font-bold pt-2 pl-2">monespace.</h1>
             </div>
-            <div className="w-3/4 max-w-2xl p-5 ">
-                {isLogged ? (
-                <>
-                    {activeTab === 'profile' && (
-                    <div>
-                        <Profile accountInfo={accountInfo} />
-                    </div>
+            <div className="flex  justify-around w-full">
+                <div className="w-1/4 p-5">
+                    {isLogged && (
+                    <nav className="flex flex-col mt-16">
+                    {profileTabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            className={`p-2 bg-transparent text-black ${activeTab === tab.id ? 'border border-black' : ''}`}
+                            onClick={() => setActiveTab(tab.id)}
+                        >
+                            {tab.name}
+                        </button>
+                    ))}
+                </nav>
                     )}
-                    {activeTab === 'orders' && (
-                    <div>
-                        <Orders />
-                    </div>
-                    )}
-                    {activeTab === 'wishlist' && (
-                        <Wishlist />
-                    )}
-                </>
-                ) 
-                 : (
+                </div>
+                <div className="w-3/4 max-w-2xl p-5 ">
+                    {isLogged && (
                     <>
-                        {showSignup ? (
-                            <div>
-                                <h2>Inscription</h2>
-                                {isSignupSuccess === false && <p>Échec de l'inscription, veuillez vérifier vos informations.</p>}
-                                <SignupForm onSignupSuccess={handleSignupSuccess}/>
-                                <p>Vous avez déjà un compte ?</p>
-                                <a className={`text-md font-normal leading-6 text-black text-base hover:text-slate-500 cursor-pointer`} onClick={() => setShowSignup(false)}>Se connecter</a>
-                            </div>
-                        ) : (
-                            <div>
-                                <h2>Login</h2>
-                                <p>Vous n'avez pas de compte ?</p>
-                                <Button onClick={() => setShowSignup(true)}>S'inscrire</Button>
-                            </div>
+                        {activeTab === 'profile' && (
+                        <div>
+                            <Profile accountInfo={accountInfo} />
+                        </div>
+                        )}
+                        {activeTab === 'orders' && (
+                        <div>
+                            <Orders />
+                        </div>
+                        )}
+                        {activeTab === 'wishlist' && (
+                            <Wishlist />
                         )}
                     </>
-                )}
+                    )}
+                </div>
             </div>
+            {!isLogged && (
+                <div className="flex items-center justify-center">
+                    <div className="p-5 w-3/5">
+                        {!showSignup ? (
+                            <div>
+                                <h2 className="text-2xl font-bold">Connexion</h2>
+                                <LoginForm />
+                                <div className="mt-2">
+                                    <p>Pas de compte ?
+                                    <a className="ml-1 text-md font-normal leading-6 text-black text-base hover:text-slate-500 cursor-pointer" onClick={() => setShowSignup(true)}>Inscription</a>
+                                    </p>
+                                </div>                            </div>
+                        ) : (
+                            <div>
+                                <h2 className="text-2xl font-bold">Inscription</h2>
+                                <SignupForm onSignupSuccess={handleSignupSuccess} />
+                                {/* already have an account div */}
+                                <div className="mt-2">
+                                    <p>Vous avez déjà un compte ?
+                                    <a className="ml-1 text-md font-normal leading-6 text-black text-base hover:text-slate-500 cursor-pointer" onClick={() => setShowSignup(false)}>Connexion</a>
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

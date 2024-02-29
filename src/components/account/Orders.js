@@ -1,8 +1,8 @@
 const Orders = () => {
 
     return (
-        <div>
-            <h2>Commandes</h2>
+        <div className="p-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">mescommandes.</h2>
             {/* Contenu des commandes ici, vide pour le moment */}
             <p>Aucune commande pour le moment.</p>
         </div>
