@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { updateUser } from '@/services/api/user.api';
 import { fetchUsers } from '@/services/api/user.api';
-import { deleteUser } from '@/services/api/user.api';
 import './page.css';
 
 const Page = () => {
@@ -45,11 +44,10 @@ const Page = () => {
 
     const handleDeleteUser = async (user) => {
         const confirmDelete = window.confirm(`Voulez-vous vraiment supprimer l'utilisateur ${user.lastname} ${user.firstname} ?`);
-    
+
         if (confirmDelete) {
             try {
                 setLoading(true);
-                console.log("User ID to delete:", user.id); // Vérifiez l'ID de l'utilisateur dans la console
                 await deleteUser(user.id);
                 const updatedUsers = users.filter(u => u.id !== user.id);
                 setUsers(updatedUsers);
@@ -59,7 +57,7 @@ const Page = () => {
                 setLoading(false);
             }
         }
-    };    
+    };
 
     if (loading) return <p>Loading...</p>;
 
