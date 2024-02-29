@@ -78,7 +78,7 @@ const SignupForm = ({ onSignupSuccess }) => {
           </div>
         </div>
       </div>
-      <Button type="submit">S'inscrire</Button>
+      <Button type="submit">S&apos;inscrire</Button>
     </form>
   );
 
