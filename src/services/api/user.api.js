@@ -80,7 +80,7 @@ export async function updateUser(user) {
 
 export async function deleteUser(id) {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/delete/${id}`, {
             method: "DELETE",
             cache: "no-store",
         });
