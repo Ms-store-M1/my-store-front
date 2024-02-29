@@ -3,16 +3,27 @@ import React, { useEffect, useState } from 'react';
 import { updateUser } from '@/services/api/user.api';
 import { fetchUsers } from '@/services/api/user.api';
 import { deleteUser } from '@/services/api/user.api';
+import useAuthStore from '@/stores/authStore';
 import './page.css';
+
+
 
 const Page = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [editedUserData, setEditedUserData] = useState({});
+    const { isAdmin } = useAuthStore();
+    const [isAuthorized, setIsAuthorized] = useState(false);
+
+
 
     useEffect(() => {
         setLoading(true);
+        if (!isAdmin) {
+            setIsAuthorized(false);
+        } else {
+            setIsAuthorized(true);
         fetchUsers().then((response) => {
             console.log('Response from fetchUsers:', response);
             setUsers(response);
@@ -20,8 +31,12 @@ const Page = () => {
         }).catch(err => {
             console.log(err);
             setLoading(false);
-        });
-    }, []); 
+        });}
+    }, [isAdmin]); 
+
+    if (!isAuthorized) {
+        return <div>401 Unauthorized - You do not have access to this page.</div>;
+    }
 
     const handleEditUser = (user) => {
         setEditingUser(user);
@@ -49,7 +64,7 @@ const Page = () => {
         if (confirmDelete) {
             try {
                 setLoading(true);
-                console.log("User ID to delete:", user.id); // Vérifiez l'ID de l'utilisateur dans la console
+                console.log("User ID to delete:", user.id); 
                 await deleteUser(user.id);
                 const updatedUsers = users.filter(u => u.id !== user.id);
                 setUsers(updatedUsers);
@@ -60,6 +75,18 @@ const Page = () => {
             }
         }
     };    
+
+    const renderField = (fieldName, placeholder) => (
+        editingUser === user ? (
+            <input
+                type="text"
+                value={editedUserData[fieldName]}
+                onChange={(e) => setEditedUserData({ ...editedUserData, [fieldName]: e.target.value })}
+            />
+        ) : (
+            <>{user[fieldName] || placeholder}</>
+        )
+    );
 
     if (loading) return <p>Loading...</p>;
 
