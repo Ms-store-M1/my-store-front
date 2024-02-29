@@ -31,6 +31,20 @@ const useAuthStore = create((set) => ({
       set(() => ({ accountInfo: user.data }));
     }
   },
+  addToWishlist: async(productId) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const payload = decodeJWT(token);
+      const userId = payload.id;
+      const user = await getUser(userId);
+      const wishlist = user.data.wishlist;
+      const newWishlist = [...wishlist, productId];
+      const updatedUser = { ...user.data, wishlist: newWishlist };
+      const req = await updateUser(updatedUser);
+      console.log(req);
+      set(() => ({ accountInfo: updatedUser }));
+    }
+  }
 }));
 
 export default useAuthStore;

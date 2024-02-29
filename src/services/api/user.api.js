@@ -49,7 +49,7 @@ export async function getUser(id) {
 
 export async function updateUser(user) {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user.id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/update/${user.id}`, {
             method: "PUT",
             cache: "no-store",
             headers: {
