@@ -200,8 +200,7 @@ export default function Page({ onDelete, isAdmin = true }) {
                             className="w-full h-32 p-2 border rounded-md resize-none"
                         />
                     ) : (
-                        // <TitlePage title={product.name} />
-                        ""
+                        <TitlePage title={product.name} />
                     )}
 
                     {editMode ? (
@@ -211,8 +210,7 @@ export default function Page({ onDelete, isAdmin = true }) {
                             className="w-full h-32 p-2 border rounded-md resize-none"
                         />
                     ) : (
-                        // <p className="mb-3 font-semibold text-lg">{product.price} €</p>
-                        ""
+                        <p className="mb-3 font-semibold text-lg">{product.price} €</p>
                     )}
 
                     {editMode ? (
@@ -222,8 +220,7 @@ export default function Page({ onDelete, isAdmin = true }) {
                             className="w-full h-32 p-2 border rounded-md resize-none"
                         />
                     ) : (
-                        // <p className="leading-7">{product.description}</p>
-                        ""
+                        <p className="leading-7">{product.description}</p>
                     )}
                 </div>
                 <div>
