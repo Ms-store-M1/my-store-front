@@ -40,47 +40,48 @@ export default function Cart() {
                 getCartFromLocalStorage();
             } else {
 
-                const fetchCart = async () => {
-                    setLoading(true);
-                    try {
-                        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-
-                        if (localCart.length > 0) {
-                            await clearCart(accountInfo.id);
-
-                            const addToCartPromises = localCart.map(el => {
-                                const newItem = {
-                                    productId: el.productId,
-                                    quantity: el.quantity,
-                                };
-                                return addToCart(accountInfo.id, newItem);
-                            });
-
-                            await Promise.all(addToCartPromises);
-                        }
-                        localStorage.removeItem("cart");
-                        const updatedCart = await getCart(accountInfo.id);
-                        if (updatedCart) {
-                            setCart(updatedCart);
-                        } else {
-                            setCart([]);
-                        }
-                    } catch (err) {
-                        console.error("Erreur lors de la mise à jour du panier:", err);
-                    } finally {
-                        setLoading(false);
-                    }
-                };
-
                 fetchCart();
             }
         }
     }, [authChecked, isLogged]);
 
-    const increaseQuantity = (productId) => {
+    const fetchCart = async () => {
+        setLoading(true);
+        try {
+            const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            if (localCart.length > 0) {
+                await clearCart(accountInfo.id);
+
+                const addToCartPromises = localCart.map(el => {
+                    const newItem = {
+                        productId: el.productId,
+                        quantity: el.quantity,
+                    };
+                    return addToCart(accountInfo.id, newItem);
+                });
+
+                await Promise.all(addToCartPromises);
+            }
+            localStorage.removeItem("cart");
+            const updatedCart = await getCart(accountInfo.id);
+            if (updatedCart) {
+                setCart(updatedCart);
+            } else {
+                setCart([]);
+            }
+        } catch (err) {
+            console.error("Erreur lors de la mise à jour du panier:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const increaseQuantity = async (product) => {
+        console.log(product);
         if (!isLogged) {
             const updatedCart = cart.map(item => {
-                if (item.productId === productId) {
+                if (item.productId === product.productId) {
                     return { ...item, quantity: item.quantity + 1 };
                 }
                 return item;
@@ -89,15 +90,27 @@ export default function Cart() {
             setCart(updatedCart);
             localStorage.setItem('cart', JSON.stringify(updatedCart));
         } else {
-
+            const _body = {
+                productId: product.productId,
+                quantity: product.quantity + 1,
+            }
+            const response = await updateCartItemQuantity(accountInfo.id, _body);
+            if (response) {
+                const updatedCart = cart.map(item => {
+                    if (item.productId === product.productId) {
+                        return { ...item, quantity: item.quantity + 1 };
+                    }
+                    return item;
+                });
+                setCart(updatedCart);
+            }
         }
     };
 
-    const decreaseQuantity = (productId) => {
+    const decreaseQuantity = async (product) => {
         if (!isLogged) {
-
             const updatedCart = cart.map(item => {
-                if (item.productId === productId && item.quantity > 1) {
+                if (item.productId === product.productId && item.quantity > 1) {
                     return { ...item, quantity: item.quantity - 1 };
                 }
                 return item;
@@ -105,7 +118,28 @@ export default function Cart() {
             setCart(updatedCart);
             localStorage.setItem('cart', JSON.stringify(updatedCart));
         } else {
-
+            if (product.quantity === 1) {
+                const response = await removeProductFromCart(accountInfo.id, product.productId);
+                if (response) {
+                    const updatedCart = cart.filter(item => item.productId !== product.productId);
+                    setCart(updatedCart);
+                }
+            } else {
+                const _body = {
+                    productId: product.productId,
+                    quantity: product.quantity - 1,
+                }
+                const response = await updateCartItemQuantity(accountInfo.id, _body);
+                if (response) {
+                    const updatedCart = cart.map(item => {
+                        if (item.productId === product.productId && item.quantity > 1) {
+                            return { ...item, quantity: item.quantity - 1 };
+                        }
+                        return item;
+                    });
+                    setCart(updatedCart);
+                }
+            }
         }
 
     };
@@ -156,13 +190,13 @@ export default function Cart() {
                                             </div>
                                             <div>
                                                 <button
-                                                    onClick={() => decreaseQuantity(item.productId)}
+                                                    onClick={() => decreaseQuantity(item)}
                                                     className="px-2 py-1 bg-gray-200">
                                                     -
                                                 </button>
                                                 <span className="px-2 py-1">{item.quantity}</span>
                                                 <button
-                                                    onClick={() => increaseQuantity(item.productId)}
+                                                    onClick={() => increaseQuantity(item)}
                                                     className="px-2 py-1 bg-gray-200">
                                                     +
                                                 </button>
