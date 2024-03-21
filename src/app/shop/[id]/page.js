@@ -86,6 +86,34 @@ export default function Page({ onDelete, isAdmin = false }) {
         onDelete(product?.id); // Call onDelete function
     };
 
+    const addToCart = async (product) => {
+        if (isLogged) {
+            try {
+                const response = await addProductToCart(product.id);
+                if (response.success) {
+                    console.log("Product added to cart successfully!");
+                } else {
+                    console.error("Failed to add product to cart.");
+                }
+            } catch (error) {
+                console.error("Error adding product to cart:", error);
+            }
+        } else {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const existingProduct = cart.find(item => item.productId === product.id);
+    
+            if (existingProduct) {
+                existingProduct.quantity += 1; 
+            } else {
+                cart.push({ productId: product.id, product, quantity: 1 }); 
+            }
+    
+            localStorage.setItem("cart", JSON.stringify(cart));
+            console.log("Product added to local cart successfully!");
+        }
+    };
+    
+
     const handleCheckboxChange = () => {
         setIsActive(!isActive); // Toggle product visibility
     };
@@ -228,6 +256,12 @@ export default function Page({ onDelete, isAdmin = false }) {
                     ) : (
                         <p className="leading-7">{product.description}</p>
                     )}
+                    <Button
+                        onClick={() => addToCart(product)}
+                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
+                    >
+                        Ajouter au panier
+                    </Button>
                     {isLogged ?  <Button
                         onClick={() => onWishlist(product.id)}
                         className="mt-4"
