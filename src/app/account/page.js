@@ -32,6 +32,8 @@ export default function Account() {
       };
 
     const handleLoginSuccess = (success, data) => {
+        console.log('success', success)
+        console.log('data',data)
         if (success) {
             console.log('Connexion réussie avec les données :', data);
             login(data);
