@@ -1,37 +1,81 @@
 "use client"
 
+import { getCart, clearCart, updateCartItemQuantity, removeProductFromCart, addToCart } from "@/services/api/cart.api";
 import useAuthStore from "@/stores/authStore"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Cart() {
 
-    const { isLogged } = useAuthStore();
+    const { isLogged, accountInfo , checkLogin } = useAuthStore();
     const [cart, setCart] = useState([]); // [ { productId: 1, product: {}, quantity: 1 }
+    const [authChecked, setAuthChecked] = useState(false); 
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLogged) {
-            const getCartFromLocalStorage = () => {
-                const localCart = localStorage.getItem("cart");
+        const fetchLogin = async () => {
+            try {
+                await checkLogin(); 
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setAuthChecked(true); 
+            }
+        };
+        fetchLogin();
+    }, []); 
 
-                if (localCart) {
-                    // Parse the cart string back into an array
-                    const cartArray = JSON.parse(localCart);
-                    setCart(cartArray);
+    useEffect(() => {
+        if (authChecked) { 
+            if (!isLogged) {
+                const getCartFromLocalStorage = () => {
+                    const localCart = localStorage.getItem("cart");
+                    if (localCart) {
+                        const cartArray = JSON.parse(localCart);
+                        setCart(cartArray);
+                    }
                     setLoading(false);
-                } else {
-                    // If there's no cart in local storage, just set loading to false
-                    setLoading(false);
-                }
-            };
+                };
+                getCartFromLocalStorage();
+            } else {
 
-            getCartFromLocalStorage();
-        } else {
-            // TODO : Get cart from server
+                const fetchCart = async () => {
+                    setLoading(true);
+                    try {
+                        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+                
+                        if (localCart.length > 0) {
+                            await clearCart(accountInfo.id);
+                
+                            const addToCartPromises = localCart.map(el => {
+                                const newItem = {
+                                    productId: el.productId,
+                                    quantity: el.quantity,
+                                };
+                                return addToCart(accountInfo.id, newItem);
+                            });
+                
+                            await Promise.all(addToCartPromises);
+                        }
+                        localStorage.removeItem("cart");
+                        const updatedCart = await getCart(accountInfo.id);
+                        if (updatedCart) {
+                            setCart(updatedCart);
+                        } else {
+                            setCart([]);
+                        }
+                    } catch (err) {
+                        console.error("Erreur lors de la mise à jour du panier:", err);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+                
+                fetchCart();
+            }
         }
-    }, [isLogged]);
+    }, [authChecked, isLogged]); 
 
     const increaseQuantity = (productId) => {
         const updatedCart = cart.map(item => {
