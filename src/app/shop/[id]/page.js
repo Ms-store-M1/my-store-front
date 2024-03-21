@@ -239,56 +239,52 @@ export default function Page({ onDelete, isAdmin = false }) {
                     </Button> : ""}
                 </div>
                 <div>
-                    {isAdmin ? (
-                        editMode ? (
-                            <>
-                                <Button
-                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
-                                    onClick={handleEdit}
-                                >
-                                    Modifier
-                                </Button>
-                                <Button
-                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
-                                    onClick={() => setShowConfirmation(true)}
-                                >
-                                    {" "}
-                                    {/* Set showConfirmation to true */}
-                                    Supprimer
-                                </Button>
-                                <div className="mt-4">
-                                    <label className="inline-flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            className="form-checkbox h-5 w-5 text-gray-600"
-                                            checked={isActive}
-                                            onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
-                                        />
-                                        <span className="ml-2 text-gray-700">
-                                            Actif
-                                        </span>
-                                    </label>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <Button
-                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-green-500 font-medium text-center text-green-500 bg-white hover:bg-green-500 hover:text-white"
-                                    onClick={handleConfirmEdit}
-                                >
-                                    Confirm
-                                </Button>
-                                <Button
-                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-gray-500 font-medium text-center text-gray-500 bg-white hover:bg-gray-500 hover:text-white"
-                                    onClick={handleCancelEdit}
-                                >
-                                    Cancel
-                                </Button>
-                            </>
-                        )
-                    ) : (
-                        ""
+                {isAdmin && (
+                        <>
+                            {editMode ? (
+                                <>
+                                    <Button
+                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-green-500 font-medium text-center text-green-500 bg-white hover:bg-green-500 hover:text-white"
+                                        onClick={handleConfirmEdit}
+                                    >
+                                        Confirm
+                                    </Button>
+                                    <Button
+                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-gray-500 font-medium text-center text-gray-500 bg-white hover:bg-gray-500 hover:text-white"
+                                        onClick={handleCancelEdit}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button
+                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
+                                        onClick={handleEdit}>
+                                        Modifier
+                                    </Button>
+                                    <Button
+                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
+                                        onClick={() => setShowConfirmation(true)}> {/* Set showConfirmation to true */}
+                                        Supprimer
+                                    </Button>
+                                </>
+                            )}
+                        </>
                     )}
+                    <div className="mt-4">
+                        {isAdmin && (
+                            <label className="inline-flex items-center">
+                                <input
+                                    type="checkbox"
+                                    className="form-checkbox h-5 w-5 text-gray-600"
+                                    checked={isActive}
+                                    onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
+                                />
+                                <span className="ml-2 text-gray-700">Actif</span>
+                            </label>
+                        )}
+                    </div>
                     {/* Confirmation message */}
                     {showConfirmation && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
