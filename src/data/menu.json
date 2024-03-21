@@ -4,6 +4,10 @@
       "path": "/shop"
     },
     {
+      "name": "Administration",
+      "path": "/admin"
+    },
+    {
       "name": "Contact",
       "path": "/contact"
     },
