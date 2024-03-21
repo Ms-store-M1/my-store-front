@@ -1,8 +1,8 @@
+"use client"
 import Link from "next/link";
 import NavMenu from "@/components/UI/NavMenu";
 import menu from "@/data/menu.json";
 import useAuthStore from "@/stores/authStore";
-
 
 const Index = () => {
     const { isLogged, accountInfo, addToWishlist } = useAuthStore();
