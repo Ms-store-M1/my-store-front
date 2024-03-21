@@ -75,7 +75,6 @@ export default function Page({ onDelete, isAdmin = false }) {
             } catch (err) {
                 setError(err);
             } finally {
-                setLoading(false);
             }
         };
         if (id) {
@@ -86,13 +85,14 @@ export default function Page({ onDelete, isAdmin = false }) {
     useEffect(() => {
         const fetchPlaceholderImage = async () => {
             const placeholder = await getBase64(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL_2}/${product.thumbnail}`
+                `${product.thumbnail}`
             );
             setPlaceholderImage(placeholder);
         };
         if (product) {
             setSelectedImage(product.thumbnail);
             fetchPlaceholderImage();
+            loading && setLoading(false);
         }
     }, [product]);
 
@@ -218,7 +218,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                             blurDataURL={placehodlerImage}
                             className="object-cover h-full w-full group-hover/show:scale-105 transition ease-in-out delay-150 z-1"
                             alt={product.name}
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL_2}/${selectedImage}`}
+                            src={`${selectedImage}`}
                             width={500}
                             height={500}
                         />
@@ -228,7 +228,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                             <Image
                                 className="cursor-pointer object-cover h-full w-full "
                                 alt={product.name}
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL_2}/${product.thumbnail}`}
+                                src={`${product.thumbnail}`}
                                 width={100}
                                 height={100}
                                 onMouseOver={() => {
@@ -245,7 +245,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                             <Image
                                 className="cursor-pointer object-cover h-full w-full"
                                 alt={product.name}
-                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL_2}/${product.packshot}`}
+                                src={`${product.packshot}`}
                                 width={100}
                                 height={100}
                                 onMouseOver={() => {
