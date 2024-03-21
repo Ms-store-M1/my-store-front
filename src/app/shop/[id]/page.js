@@ -11,6 +11,7 @@ import Alert from "@/components/UI/Alert";
 import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
+import { addToCart, getCart, updateCartItemQuantity } from "@/services/api/cart.api";
 
 export default function Page({ onDelete, isAdmin = false }) {
     const { id } = useParams();
@@ -21,12 +22,46 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
-    const { isLogged, accountInfo, addToWishlist } = useAuthStore();
+    const { isLogged, accountInfo, addToWishlist, checkLogin } = useAuthStore();
     const [wishlisted, setWishlisted] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isActive, setIsActive] = useState(product?.active || false);
     const [editMode, setEditMode] = useState(false);
     const [originalProduct, setOriginalProduct] = useState(null);
+    const [cart, setCart] = useState([]);
+    const [authChecked, setAuthChecked] = useState(false); 
+
+    useEffect(() => {
+        const fetchLogin = async () => {
+            try {
+                await checkLogin(); 
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setAuthChecked(true); 
+            }
+        };
+        fetchLogin();
+    }, []); 
+
+    const fetchCart = async () => {
+        try {
+            let cart = await getCart(accountInfo.id);
+            setCart(cart);
+        }
+        catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if (authChecked) {
+            if (isLogged) {
+                fetchCart();
+            }
+
+        }
+    }, [authChecked]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -86,14 +121,27 @@ export default function Page({ onDelete, isAdmin = false }) {
         onDelete(product?.id); // Call onDelete function
     };
 
-    const addToCart = async (product) => {
+    const addToCartHandler = async (product) => {
         if (isLogged) {
             try {
-                const response = await addProductToCart(product.id);
-                if (response.success) {
-                    console.log("Product added to cart successfully!");
+                const existingProduct = cart.find(item => item.productId === product.id);
+    
+                if (existingProduct) {
+                    const _body = {
+                        productId: product.id,
+                        quantity: existingProduct.quantity + 1,
+                    }
+                    const response = await updateCartItemQuantity(accountInfo.id, _body);
+                    fetchCart();
+                    console.log(response);
                 } else {
-                    console.error("Failed to add product to cart.");
+                    const _body = {
+                        productId: product.id,
+                        quantity: 1,
+                    }
+                    const response = await addToCart(accountInfo.id, _body);
+                    console.log(response);
+                    fetchCart();
                 }
             } catch (error) {
                 console.error("Error adding product to cart:", error);
@@ -257,7 +305,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                         <p className="leading-7">{product.description}</p>
                     )}
                     <Button
-                        onClick={() => addToCart(product)}
+                        onClick={() => addToCartHandler(product)}
                         className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
                     >
                         Ajouter au panier
