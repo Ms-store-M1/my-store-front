@@ -1,0 +1,184 @@
+"use client"
+
+import { getCart, clearCart, updateCartItemQuantity, removeProductFromCart, addToCart } from "@/services/api/cart.api";
+import useAuthStore from "@/stores/authStore"
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function Cart() {
+
+    const { isLogged, accountInfo, checkLogin } = useAuthStore();
+    const [cart, setCart] = useState([]); // [ { productId: 1, product: {}, quantity: 1 }
+    const [authChecked, setAuthChecked] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchLogin = async () => {
+            try {
+                await checkLogin();
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setAuthChecked(true);
+            }
+        };
+        fetchLogin();
+    }, []);
+
+    useEffect(() => {
+        if (authChecked) {
+            if (!isLogged) {
+                const getCartFromLocalStorage = () => {
+                    const localCart = localStorage.getItem("cart");
+                    if (localCart) {
+                        const cartArray = JSON.parse(localCart);
+                        setCart(cartArray);
+                    }
+                    setLoading(false);
+                };
+                getCartFromLocalStorage();
+            } else {
+
+                const fetchCart = async () => {
+                    setLoading(true);
+                    try {
+                        const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+                        if (localCart.length > 0) {
+                            await clearCart(accountInfo.id);
+
+                            const addToCartPromises = localCart.map(el => {
+                                const newItem = {
+                                    productId: el.productId,
+                                    quantity: el.quantity,
+                                };
+                                return addToCart(accountInfo.id, newItem);
+                            });
+
+                            await Promise.all(addToCartPromises);
+                        }
+                        localStorage.removeItem("cart");
+                        const updatedCart = await getCart(accountInfo.id);
+                        if (updatedCart) {
+                            setCart(updatedCart);
+                        } else {
+                            setCart([]);
+                        }
+                    } catch (err) {
+                        console.error("Erreur lors de la mise à jour du panier:", err);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                fetchCart();
+            }
+        }
+    }, [authChecked, isLogged]);
+
+    const increaseQuantity = (productId) => {
+        if (!isLogged) {
+            const updatedCart = cart.map(item => {
+                if (item.productId === productId) {
+                    return { ...item, quantity: item.quantity + 1 };
+                }
+                return item;
+            });
+
+            setCart(updatedCart);
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+
+        }
+    };
+
+    const decreaseQuantity = (productId) => {
+        if (!isLogged) {
+
+            const updatedCart = cart.map(item => {
+                if (item.productId === productId && item.quantity > 1) {
+                    return { ...item, quantity: item.quantity - 1 };
+                }
+                return item;
+            });
+            setCart(updatedCart);
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+
+        }
+
+    };
+
+    const handleCheckout = () => {
+        if (!isLogged) {
+            router.push('/account?from=cart')
+        } else {
+            router.push('/checkout')
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p>Chargement...</p>
+            </div>
+        );
+    } else {
+
+    }
+
+    return (
+        <div className="min-h-screen w-full px-2 bg-gray-50">
+            <div className="flex justify-between my-2">
+                <h1 className="text-3xl font-bold pt-2 pl-2">monpanier.</h1>
+                <button
+                    onClick={() => handleCheckout()}
+                    className="p-2 border border-black-500"
+                >
+                    Commander
+                </button>
+            </div>
+            <div>
+                {
+                    cart.length > 0 ? (
+                        <div>
+                            {
+                                cart.map((item) => {
+                                    return (
+                                        <div key={item.productId} className="flex items-center justify-between p-2 border-b border-gray-200">
+                                            <div className="flex items-center">
+                                                <img src={item.product.thumbnail} alt={item.product.name} className="w-20 h-20 object-cover" />
+                                                <div className="ml-2">
+                                                    <h2 className="text-lg font-semibold">{item.product.name}</h2>
+                                                    <p className="text-sm text-gray-500">{item.product.price} €</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button
+                                                    onClick={() => decreaseQuantity(item.productId)}
+                                                    className="px-2 py-1 bg-gray-200">
+                                                    -
+                                                </button>
+                                                <span className="px-2 py-1">{item.quantity}</span>
+                                                <button
+                                                    onClick={() => increaseQuantity(item.productId)}
+                                                    className="px-2 py-1 bg-gray-200">
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    ) : (
+                        <div className="flex items-center justify-center h-64">
+                            <p>Votre panier est vide.</p>
+                        </div>
+                    )
+                }
+            </div>
+        </div>
+    )
+}
