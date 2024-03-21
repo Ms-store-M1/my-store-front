@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '../UI/Button';
 import { loginUser } from '@/services/api/user.api';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -27,8 +28,12 @@ const LoginForm = ({ onLoginSuccess }) => {
       // check promise result
       console.log(req);
       // stock token in localstorage
-      localStorage.setItem('token', req.token);
-      onLoginSuccess(true, formData);
+      if (req.auth && req.token) {
+        localStorage.setItem('token', req.token);
+        onLoginSuccess(true, formData);
+      } else {
+        onLoginSuccess(false, {});
+      }
     } else {
       onLoginSuccess(false, {});
     }

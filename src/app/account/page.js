@@ -20,11 +20,11 @@ export default function Account() {
     const [showSignup, setShowSignup] = useState(false);
     const [isSignupSuccess, setIsSignupSuccess] = useState(null);
     const [activeTab, setActiveTab] = useState('profile'); 
+    const [error, setError] = useState(false);
 
     const handleSignupSuccess = (success, data) => {
         setIsSignupSuccess(success);
         if (success) {
-            console.log('Inscription réussie avec les données :', data);
             setShowSignup(false);
             login(data);
         } else {
@@ -33,9 +33,9 @@ export default function Account() {
 
     const handleLoginSuccess = (success, data) => {
         if (success) {
-            console.log('Connexion réussie avec les données :', data);
             login(data);
         } else {
+            setError(true);
         }
     }
 
@@ -109,6 +109,14 @@ export default function Account() {
                         {!showSignup ? (
                             <div>
                                 <h2 className="text-2xl font-bold">Connexion</h2>
+                                {
+                                    error && (
+                                        <div className="my-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                            <strong className="font-bold">Erreur !</strong>
+                                            <span className="block sm:inline">Email ou mot de passe incorrect.</span>
+                                        </div>
+                                    )
+                                }
                                 <LoginForm onLoginSuccess={handleLoginSuccess} />
                                 <div className="mt-2">
                                     <p>Pas de compte ?
@@ -118,6 +126,14 @@ export default function Account() {
                         ) : (
                             <div>
                                 <h2 className="text-2xl font-bold">Inscription</h2>
+                                {
+                                    isSignupSuccess === false && (
+                                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                            <strong className="font-bold">Erreur !</strong>
+                                            <span className="block sm:inline">Une erreur s'est produite lors de l'inscription.</span>
+                                        </div>
+                                    )
+                                }
                                 <SignupForm onSignupSuccess={handleSignupSuccess} />
                                 {/* already have an account div */}
                                 <div className="mt-2">

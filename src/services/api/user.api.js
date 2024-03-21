@@ -85,7 +85,7 @@ export async function deleteUser(id) {
             cache: "no-store",
         });
         const data = await res.json();
-        console.log("Delete user response:", data); // Vérifie la réponse du backend dans la console
+        console.log("Delete user response:", data); // TEST Vérifie la réponse du backend dans la console
         return data;
     } catch (err) {
         return err;

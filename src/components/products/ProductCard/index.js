@@ -47,7 +47,7 @@ class Index extends Component {
                         <Image
                             className="group-hover/thumbnail:opacity-100 group-hover/thumbnail:scale-105 transition ease-in-out delay-150"
                             alt={product.name}
-                            src={`${product.thumbnail}`}
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${product.thumbnail}`}
                             fill
                             sizes="100%"
                             style={{ objectFit: "cover" }}
@@ -55,7 +55,7 @@ class Index extends Component {
                         <Image
                             className="opacity-100 group-hover/thumbnail:scale-105 group-hover/thumbnail:opacity-0 transition ease-in-out delay-150"
                             alt={product.name}
-                            src={`${product.packshot}`}
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${product.packshot}`}
                             fill
                             sizes="100%"
                             style={{ objectFit: "cover" }}
