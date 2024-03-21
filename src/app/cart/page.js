@@ -1,6 +1,7 @@
 "use client"
 
 import useAuthStore from "@/stores/authStore"
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Cart() {
@@ -8,6 +9,7 @@ export default function Cart() {
     const { isLogged } = useAuthStore();
     const [cart, setCart] = useState([]); // [ { productId: 1, product: {}, quantity: 1 }
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         if (!isLogged) {
@@ -55,6 +57,13 @@ export default function Cart() {
         localStorage.setItem('cart', JSON.stringify(updatedCart));
     };
 
+    const handleCheckout = () => {
+        if (!isLogged) {
+            router.push('/account?from=cart')
+        } else {
+            router.push('/checkout')
+        }
+    }
 
     if (loading) {
         return (
@@ -68,9 +77,14 @@ export default function Cart() {
 
     return (
         <div className="min-h-screen w-full px-2 bg-gray-50">
-            <div>
+            <div className="flex justify-between my-2">
                 <h1 className="text-3xl font-bold pt-2 pl-2">monpanier.</h1>
-                
+                <button 
+                    onClick={() => handleCheckout()}
+                    className="p-2 border border-black-500"
+                >
+                    Commander
+                </button>
             </div>
             <div>
                 {
