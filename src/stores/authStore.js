@@ -22,14 +22,13 @@ const useAuthStore = create((set) => ({
   },
   checkLogin: async () => {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && token != undefined) {
       set(() => ({ isLogged: true }));
       const payload = decodeJWT(token);
       const userId = payload.id;
       const isAdmin = payload.isAdmin === true;
     
       const user = await getUser(userId);
-      console.log("pword", user);
       set(() => ({ isLogged: true, isAdmin: isAdmin, accountInfo: user.data }));
     }
   },
