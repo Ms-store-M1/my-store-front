@@ -109,14 +109,20 @@ export default function Cart() {
 
     const decreaseQuantity = async (product) => {
         if (!isLogged) {
-            const updatedCart = cart.map(item => {
-                if (item.productId === product.productId && item.quantity > 1) {
-                    return { ...item, quantity: item.quantity - 1 };
-                }
-                return item;
-            });
-            setCart(updatedCart);
-            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            if (product.quantity === 1) {
+                    const updatedCart = cart.filter(item => item.productId !== product.productId);
+                    setCart(updatedCart);
+                    localStorage.setItem('cart', JSON.stringify(updatedCart));
+            } else {
+                const updatedCart = cart.map(item => {
+                    if (item.productId === product.productId && item.quantity > 1) {
+                        return { ...item, quantity: item.quantity - 1 };
+                    }
+                    return item;
+                });
+                setCart(updatedCart);
+                localStorage.setItem('cart', JSON.stringify(updatedCart));
+            }
         } else {
             if (product.quantity === 1) {
                 const response = await removeProductFromCart(accountInfo.id, product.productId);
