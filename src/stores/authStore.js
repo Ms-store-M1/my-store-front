@@ -22,7 +22,7 @@ const useAuthStore = create((set) => ({
   },
   checkLogin: async () => {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && token != undefined) {
       set(() => ({ isLogged: true }));
       const payload = decodeJWT(token);
       const userId = payload.id;
