@@ -27,7 +27,6 @@ export async function loginUser(user) {
             body: JSON.stringify(user),
         });
         const data = await res.json();
-        console.log("okok",data)
         return data;
     }
     catch (err) {

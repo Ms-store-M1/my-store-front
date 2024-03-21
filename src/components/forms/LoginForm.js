@@ -25,15 +25,10 @@ const LoginForm = ({ onLoginSuccess }) => {
       console.log(formData);
       const req = await loginUser(formData);
       // check promise result
-      if(req.message !== "User not found"){
-        // stock token in localstorage
-        console.log('ojkoejzomreguhiekblhei', req)
-        localStorage.setItem('token', req.token);
-        onLoginSuccess(true, req.user);
-      }else{
-        onLoginSuccess(false, {message : 'User not found'});
-
-      }
+      console.log(req);
+      // stock token in localstorage
+      localStorage.setItem('token', req.token);
+      onLoginSuccess(true, formData);
     } else {
       onLoginSuccess(false, {});
     }
