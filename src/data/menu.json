@@ -10,5 +10,9 @@
     {
       "name": "Compte",
       "path": "/account"
+    },
+    {
+      "name": "Panier",
+      "path": "/cart"
     }
 ]

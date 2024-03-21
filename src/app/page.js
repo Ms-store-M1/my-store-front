@@ -1,3 +1,4 @@
+
 import Hero from "../components/UI/Hero";
 import bannerImg from "../assets/images/banner.jpeg";
 
