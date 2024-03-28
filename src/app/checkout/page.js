@@ -1,31 +1,37 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loadStripe } from '@stripe/stripe-js';
 import { handlePayment } from "@/services/api/stripe.api";
-
+import useAuthStore from "@/stores/authStore";
+import { getCart } from "@/services/api/cart.api";
 
 export default function Checkout() {
 
+    const { isLogged, accountInfo } = useAuthStore();
+    const [cart, setCart] = useState(null); 
     const [deliveryMethod, setDeliveryMethod] = useState('inStore'); // 'inStore' ou 'homeDelivery'
     const [address, setAddress] = useState('');
     const stripePromise = loadStripe('pk_test_51OwjAj02i32qXvQWs3V6rnNhzZrWn3PCbbIqOK7t9tnfyBqqnk2EwTmHyaTm1KdegFoJcFUzNJukGppwgY2i8zD600kExRM1gp');
 
-    // Logique pour gérer la soumission du formulaire de paiement
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const stripe = await stripePromise;
-        const { error } = await stripe.redirectToCheckout({
-            lineItems: [{ price: 'price_12345', quantity: 1 }],
-            mode: 'payment',
-            successUrl: 'https://your-website.com/success',
-            cancelUrl: 'https://your-website.com/cancel',
-            shippingAddressCollection: {
-                allowedCountries: ['FR'],
-            },
-        });
-        if (error) {
-            console.error(error);
+    useEffect(() => {
+        if (isLogged) {
+            getCart(accountInfo.id).then(cartData => {
+                setCart(cartData);
+            });
+        }
+    }, [isLogged, accountInfo.id]);
+
+    const handleCheckoutClick = async () => {
+        if (!cart) {
+            console.error('Aucun article dans le panier');
+            return;
+        }
+        const result = await handlePayment(cart);
+        if (result.error) {
+            console.error('Erreur de paiement', result.error);
+        } else {
+            window.location.href = result.url;
         }
     };
 
@@ -71,7 +77,7 @@ export default function Checkout() {
                     </div>
                 )}
                 <button
-                    onClick={handlePayment} // Appel de la fonction de paiement
+                    onClick={handleCheckoutClick} // Appel de la fonction de paiement
                     className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800"
                 >
                     Payer avec Stripe
