@@ -14,5 +14,9 @@
     {
       "name": "Panier",
       "path": "/cart"
+    },
+    {
+      "name": "Commandes",
+      "path": "/orders"
     }
 ]
