@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getOrders } from "@/services/api/order.api.js";
+import { getOrders, getOrdersOfUser } from "@/services/api/order.api.js";
 import Alert from "@/components/UI/Alert";
 import OrdersGrid from "@/components/orders/OrdersGrid";
 import TitlePage from "@/components/UI/TitlePage";
@@ -7,18 +7,26 @@ import OrdersCounter from "@/components/orders/OrdersCounter";
 
 export default async function Page({
     searchParams,
+    userId,
 }) {
     //const isAdmin = checkIfUserIsAdmin(context);
     const isAdmin = false;
-    const { take = 8 } = searchParams || {};
+    const { take = 8, user: requestedUserId } = searchParams || {};
 
     try {
-        const orders = await getOrders(take);
+        let orders;
+        if (isAdmin && requestedUserId) {
+            orders = await getOrdersOfUser(requestedUserId, take);
+        } else if (isAdmin) {
+            orders = await getOrders(take);
+        } else {
+            orders = await getOrdersOfUser(userId);
+        }
 
         if (!orders.data || orders.success === false) {
             return <Alert message={orders.message || "Failed to fetch orders."} type="error" />;
         }
-
+    
         return (
             <div className="container mx-auto">
                 <TitlePage title="Liste des commandes des clients" />

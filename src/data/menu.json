@@ -17,6 +17,7 @@
     },
     {
       "name": "Commandes",
-      "path": "/orders"
+      "path": "/orders",
+      "dynamicUrl": true
     }
 ]
