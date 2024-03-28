@@ -30,7 +30,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       // stock token in localstorage
       if (req.auth && req.token) {
         localStorage.setItem('token', req.token);
-        onLoginSuccess(true, formData);
+        onLoginSuccess(true, req.data);
       } else {
         onLoginSuccess(false, {});
       }
