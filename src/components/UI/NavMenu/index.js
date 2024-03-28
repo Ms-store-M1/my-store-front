@@ -1,6 +1,11 @@
+'use client';
 import Link from "next/link";
+import useAuthStore from '@/stores/authStore';
 
 const Index = ({menu, color}) => {
+
+  const { isLogged, isAdmin, accountInfo} = useAuthStore();
+  console.log(isLogged, isAdmin, accountInfo);
 
   const colors = {
     scale: "scale-500",
@@ -23,6 +28,17 @@ const Index = ({menu, color}) => {
             </li>
           ))
         }
+        <li>
+          {
+            isLogged && isAdmin && (
+              <Link 
+                href="/admin" 
+                className={`text-md font-normal leading-6 text-${colors[color]} text-base hover:text-slate-500`}>
+                Admin
+              </Link>
+            )
+          }
+        </li>
         <li>
           <a target="_blank" href="https://www.instagram.com/">
             <svg
