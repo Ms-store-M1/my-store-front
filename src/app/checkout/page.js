@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { loadStripe } from '@stripe/stripe-js';
 import { handlePayment } from "@/services/api/stripe.api";
 import useAuthStore from "@/stores/authStore";
 import { getCart } from "@/services/api/cart.api";
@@ -12,7 +11,6 @@ export default function Checkout() {
     const [cart, setCart] = useState(null); 
     const [deliveryMethod, setDeliveryMethod] = useState('inStore'); // 'inStore' ou 'homeDelivery'
     const [address, setAddress] = useState('');
-    const stripePromise = loadStripe('pk_test_51OwjAj02i32qXvQWs3V6rnNhzZrWn3PCbbIqOK7t9tnfyBqqnk2EwTmHyaTm1KdegFoJcFUzNJukGppwgY2i8zD600kExRM1gp');
 
     useEffect(() => {
         if (isLogged) {
