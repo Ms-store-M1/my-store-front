@@ -2,11 +2,17 @@ import { useEffect, useState } from "react";
 
 const Wishlist = ({ wishlist }) => {
 
+    const deleteItem = (item) => {
+
+    }
+
+
     return (
         <div className="p-4">
             {
                 wishlist.length > 0 ? (
                     <div>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">ma liste de souhait.</h2>
                         {
                             wishlist.map((item) => {
                                 return (
@@ -18,6 +24,9 @@ const Wishlist = ({ wishlist }) => {
                                                 <p className="text-sm text-gray-500">{item.price} €</p>
                                             </div>
                                         </div>
+                                        {/* <div>
+                                            <button onClick={() => deleteItem(item)} className="px-2 py-1 bg-gray-200">Retirer</button>
+                                        </div> */}
                                     </div>
                                 )
                             })

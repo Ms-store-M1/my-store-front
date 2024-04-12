@@ -29,7 +29,6 @@ const useAuthStore = create((set) => ({
       const isAdmin = payload.isAdmin === true;
     
       const user = await getUser(userId);
-      console.log("pword", user);
       set(() => ({ isLogged: true, isAdmin: isAdmin, accountInfo: user.data }));
     }
   },
