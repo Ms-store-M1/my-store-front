@@ -11,6 +11,7 @@ import Alert from "@/components/UI/Alert";
 import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
+import { addToCart, getCart, updateCartItemQuantity } from "@/services/api/cart.api";
 
 export default function Page({ onDelete, isAdmin = false }) {
     const { id } = useParams();
@@ -21,12 +22,46 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
-    const { isLogged, accountInfo, addToWishlist } = useAuthStore();
+    const { isLogged, accountInfo, addToWishlist, checkLogin } = useAuthStore();
     const [wishlisted, setWishlisted] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isActive, setIsActive] = useState(product?.active || false);
     const [editMode, setEditMode] = useState(false);
     const [originalProduct, setOriginalProduct] = useState(null);
+    const [cart, setCart] = useState([]);
+    const [authChecked, setAuthChecked] = useState(false); 
+
+    useEffect(() => {
+        const fetchLogin = async () => {
+            try {
+                await checkLogin(); 
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setAuthChecked(true); 
+            }
+        };
+        fetchLogin();
+    }, []); 
+
+    const fetchCart = async () => {
+        try {
+            let cart = await getCart(accountInfo.id);
+            setCart(cart);
+        }
+        catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if (authChecked) {
+            if (isLogged) {
+                fetchCart();
+            }
+
+        }
+    }, [authChecked]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -40,7 +75,6 @@ export default function Page({ onDelete, isAdmin = false }) {
             } catch (err) {
                 setError(err);
             } finally {
-                setLoading(false);
             }
         };
         if (id) {
@@ -58,6 +92,7 @@ export default function Page({ onDelete, isAdmin = false }) {
         if (product) {
             setSelectedImage(product.thumbnail);
             fetchPlaceholderImage();
+            loading && setLoading(false);
         }
     }, [product]);
 
@@ -85,6 +120,47 @@ export default function Page({ onDelete, isAdmin = false }) {
         setShowConfirmation(false); // Hide confirmation message
         onDelete(product?.id); // Call onDelete function
     };
+
+    const addToCartHandler = async (product) => {
+        if (isLogged) {
+            try {
+                const existingProduct = cart.find(item => item.productId === product.id);
+    
+                if (existingProduct) {
+                    const _body = {
+                        productId: product.id,
+                        quantity: existingProduct.quantity + 1,
+                    }
+                    const response = await updateCartItemQuantity(accountInfo.id, _body);
+                    fetchCart();
+                    console.log(response);
+                } else {
+                    const _body = {
+                        productId: product.id,
+                        quantity: 1,
+                    }
+                    const response = await addToCart(accountInfo.id, _body);
+                    console.log(response);
+                    fetchCart();
+                }
+            } catch (error) {
+                console.error("Error adding product to cart:", error);
+            }
+        } else {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const existingProduct = cart.find(item => item.productId === product.id);
+    
+            if (existingProduct) {
+                existingProduct.quantity += 1; 
+            } else {
+                cart.push({ productId: product.id, product, quantity: 1 }); 
+            }
+    
+            localStorage.setItem("cart", JSON.stringify(cart));
+            console.log("Product added to local cart successfully!");
+        }
+    };
+    
 
     const handleCheckboxChange = () => {
         setIsActive(!isActive); // Toggle product visibility
@@ -228,6 +304,12 @@ export default function Page({ onDelete, isAdmin = false }) {
                     ) : (
                         <p className="leading-7">{product.description}</p>
                     )}
+                    <Button
+                        onClick={() => addToCartHandler(product)}
+                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
+                    >
+                        Ajouter au panier
+                    </Button>
                     {isLogged ?  <Button
                         onClick={() => onWishlist(product.id)}
                         className="mt-4"
@@ -239,52 +321,56 @@ export default function Page({ onDelete, isAdmin = false }) {
                     </Button> : ""}
                 </div>
                 <div>
-                {isAdmin && (
-                        <>
-                            {editMode ? (
-                                <>
-                                    <Button
-                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-green-500 font-medium text-center text-green-500 bg-white hover:bg-green-500 hover:text-white"
-                                        onClick={handleConfirmEdit}
-                                    >
-                                        Confirm
-                                    </Button>
-                                    <Button
-                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-gray-500 font-medium text-center text-gray-500 bg-white hover:bg-gray-500 hover:text-white"
-                                        onClick={handleCancelEdit}
-                                    >
-                                        Cancel
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Button
-                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
-                                        onClick={handleEdit}>
-                                        Modifier
-                                    </Button>
-                                    <Button
-                                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
-                                        onClick={() => setShowConfirmation(true)}> {/* Set showConfirmation to true */}
-                                        Supprimer
-                                    </Button>
-                                </>
-                            )}
-                        </>
+                    {isAdmin ? (
+                        editMode ? (
+                            <>
+                                <Button
+                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
+                                    onClick={handleEdit}
+                                >
+                                    Modifier
+                                </Button>
+                                <Button
+                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
+                                    onClick={() => setShowConfirmation(true)}
+                                >
+                                    {" "}
+                                    {/* Set showConfirmation to true */}
+                                    Supprimer
+                                </Button>
+                                <div className="mt-4">
+                                    <label className="inline-flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            className="form-checkbox h-5 w-5 text-gray-600"
+                                            checked={isActive}
+                                            onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
+                                        />
+                                        <span className="ml-2 text-gray-700">
+                                            Actif
+                                        </span>
+                                    </label>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-green-500 font-medium text-center text-green-500 bg-white hover:bg-green-500 hover:text-white"
+                                    onClick={handleConfirmEdit}
+                                >
+                                    Confirm
+                                </Button>
+                                <Button
+                                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-gray-500 font-medium text-center text-gray-500 bg-white hover:bg-gray-500 hover:text-white"
+                                    onClick={handleCancelEdit}
+                                >
+                                    Cancel
+                                </Button>
+                            </>
+                        )
+                    ) : (
+                        ""
                     )}
-                    <div className="mt-4">
-                        {isAdmin && (
-                            <label className="inline-flex items-center">
-                                <input
-                                    type="checkbox"
-                                    className="form-checkbox h-5 w-5 text-gray-600"
-                                    checked={isActive}
-                                    onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
-                                />
-                                <span className="ml-2 text-gray-700">Actif</span>
-                            </label>
-                        )}
-                    </div>
                     {/* Confirmation message */}
                     {showConfirmation && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
