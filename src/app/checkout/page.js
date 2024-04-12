@@ -9,14 +9,25 @@ export default function Checkout() {
 
     const { isLogged, accountInfo } = useAuthStore();
     const [cart, setCart] = useState(null); 
-    const [deliveryMethod, setDeliveryMethod] = useState('inStore'); // 'inStore' ou 'homeDelivery'
-    const [address, setAddress] = useState('');
+    
 
     useEffect(() => {
         if (isLogged) {
             getCart(accountInfo.id).then(cartData => {
                 setCart(cartData);
+                if (cartData) {
+                    payement(cartData);
+                }
             });
+        }
+
+        const payement = async (cartData) => {
+            const result = await handlePayment(cartData);
+            if (result.error) {
+                console.error('Erreur de paiement', result.error);
+            } else {
+                window.location.href = result.url;
+            }
         }
     }, [isLogged, accountInfo.id]);
 
@@ -36,49 +47,14 @@ export default function Checkout() {
     return (
         <div className="min-h-screen w-full p-4 bg-white">
             <div className="my-4">
-                <h1 className="text-3xl font-bold">Récapitulatif de ma commande</h1>
+                <h1 className="text-3xl font-bold">Lancement de votre paiement...</h1>
             </div>
-            <div className="space-y-4 w-1/2 m-auto">
-                <div>
-                    <label className="inline-flex items-center space-x-2">
-                        <input
-                            type="radio"
-                            value="inStore"
-                            checked={deliveryMethod === 'inStore'}
-                            onChange={() => setDeliveryMethod('inStore')}
-                            className="text-black border-gray-300"
-                        />
-                        <span>Retrait en magasin</span>
-                    </label>
-                </div>
-                <div>
-                    <label className="inline-flex items-center space-x-2">
-                        <input
-                            type="radio"
-                            value="homeDelivery"
-                            checked={deliveryMethod === 'homeDelivery'}
-                            onChange={() => setDeliveryMethod('homeDelivery')}
-                            className="text-black border-gray-300"
-                        />
-                        <span>Livraison à domicile</span>
-                    </label>
-                </div>
-                {deliveryMethod === 'homeDelivery' && (
-                    <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700">Votre adresse de livraison:</label>
-                        <input
-                            type="text"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        />
-                    </div>
-                )}
+            <div className="space-y-4 w-1/2 ">
                 <button
                     onClick={handleCheckoutClick} // Appel de la fonction de paiement
-                    className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800"
-                >
-                    Payer avec Stripe
+                    className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
+                    >
+                    Cliquez ici si votre payement ne s'ouvre pas automatiquement.
                 </button>
             </div>
         </div>

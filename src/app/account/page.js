@@ -79,6 +79,7 @@ export default function Account() {
                     {isLogged && (
                     <nav className="flex flex-col mt-16">
                     {profileTabs.map((tab) => (
+                        
                         <button
                             key={tab.id}
                             className={`p-2 bg-transparent text-black ${activeTab === tab.id ? 'border border-black' : ''}`}
@@ -104,7 +105,7 @@ export default function Account() {
                         </div>
                         )}
                         {activeTab === 'wishlist' && (
-                            <Wishlist />
+                            <Wishlist wishlist={accountInfo.wishlist} />
                         )}
                     </>
                     )}

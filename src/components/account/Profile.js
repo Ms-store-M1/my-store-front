@@ -24,9 +24,11 @@ const Profile = ({ accountInfo }) => {
   useEffect(() => {
     if (accountInfo) {
       // delete password
-      delete accountInfo.password;
-      delete accountInfo.isadmin;
-      setUserInfo(accountInfo);
+      const accountInfoObject = { ...accountInfo };
+      delete accountInfoObject.password;
+      delete accountInfoObject.isadmin;
+      delete accountInfoObject.wishlist;
+      setUserInfo(accountInfoObject);
     }
   }, [accountInfo])
 
@@ -61,7 +63,7 @@ const Profile = ({ accountInfo }) => {
     <div className="p-4">
       {!isEditing ? (
         <>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Mon profil</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">mon profil.</h2>
           <ul className="list-none list-inside mb-4">
             {Object.entries(userInfo).filter(([key]) => key !== 'id' && key !== 'isadmin' && key !== 'password').map(([key, value]) => (
               <li key={key} className="border-b border-gray-200 py-2">
