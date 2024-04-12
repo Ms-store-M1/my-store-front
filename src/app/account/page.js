@@ -39,6 +39,12 @@ export default function Account() {
         }
     }
 
+    const handleTyping = () => {
+        if (error) {
+            setError(false);
+        }
+    }
+
     useEffect(() => {
         setLoading(true);
         const checkLoginStatus = async () => {
@@ -54,6 +60,7 @@ export default function Account() {
         checkLoginStatus();
     }, [setLoading, checkLogin]);
 
+   
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -117,7 +124,7 @@ export default function Account() {
                                         </div>
                                     )
                                 }
-                                <LoginForm onLoginSuccess={handleLoginSuccess} />
+                                <LoginForm onTyping={handleTyping} onLoginSuccess={handleLoginSuccess} />
                                 <div className="mt-2">
                                     <p>Pas de compte ?
                                     <a className="ml-1 text-md font-normal leading-6 text-black text-base hover:text-slate-500 cursor-pointer" onClick={() => setShowSignup(true)}>Inscription</a>
@@ -134,7 +141,7 @@ export default function Account() {
                                         </div>
                                     )
                                 }
-                                <SignupForm onSignupSuccess={handleSignupSuccess} />
+                                <SignupForm onTyping={handleTyping} onSignupSuccess={handleSignupSuccess} />
                                 {/* already have an account div */}
                                 <div className="mt-2">
                                     <p>Vous avez déjà un compte ?

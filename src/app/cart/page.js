@@ -172,12 +172,16 @@ export default function Cart() {
         <div className="min-h-screen w-full px-2 bg-gray-50">
             <div className="flex justify-between my-2">
                 <h1 className="text-3xl font-bold pt-2 pl-2">monpanier.</h1>
-                <button
-                    onClick={() => handleCheckout()}
-                    className="p-2 border border-black-500"
-                >
-                    Commander
-                </button>
+                {
+                    cart.length > 0 && (
+                        <button
+                            onClick={() => handleCheckout()}
+                            className="p-2 border border-black-500"
+                        >
+                            Commander
+                        </button>
+                    )
+                }
             </div>
             <div>
                 {

@@ -24,6 +24,7 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [error, setError] = useState(null);
     const { isLogged, accountInfo, addToWishlist, checkLogin } = useAuthStore();
     const [wishlisted, setWishlisted] = useState(false);
+    const [isOnCart, setIsOnCart] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isActive, setIsActive] = useState(product?.active || false);
     const [editMode, setEditMode] = useState(false);
@@ -133,6 +134,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     }
                     const response = await updateCartItemQuantity(accountInfo.id, _body);
                     fetchCart();
+                    setIsOnCart(true);
                     console.log(response);
                 } else {
                     const _body = {
@@ -142,6 +144,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     const response = await addToCart(accountInfo.id, _body);
                     console.log(response);
                     fetchCart();
+                    setIsOnCart(true);
                 }
             } catch (error) {
                 console.error("Error adding product to cart:", error);
@@ -306,13 +309,17 @@ export default function Page({ onDelete, isAdmin = false }) {
                     )}
                     <Button
                         onClick={() => addToCartHandler(product)}
-                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
+                        className='transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 ${} bg-white'
                     >
-                        Ajouter au panier
+                        {
+                            isOnCart
+                                ? "Ajouté au panier"
+                                : "Ajouter au panier"
+                        }
                     </Button>
                     {isLogged ?  <Button
                         onClick={() => onWishlist(product.id)}
-                        className="mt-4"
+                        className="transition ease-in-out delay-150 ml-4 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
                         disabled={wishlisted}
                     >
                         {wishlisted
