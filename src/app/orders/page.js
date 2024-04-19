@@ -55,8 +55,7 @@ export default async function Page({
         if (!orders || orders.length === 0) {
             return <Alert message="No orders found." type="info" />;
         }
-        
-        // Next step : Work on the look of OrderCard and display the name of the owner of the order (user) 
+    
         return (
             <div className="container mx-auto">
                 <TitlePage title="Liste des commandes des clients" />

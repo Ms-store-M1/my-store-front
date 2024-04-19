@@ -20,13 +20,6 @@ class Index extends Component {
         const formattedDate = this.formatOrderDate(order.orderDate);
         const isVisible = isAdmin;
 
-        console.log(order);
-        console.log(order.status);
-        console.log(user);
-        console.log(user.data.firstname);
-
-        // Next step : Work on the look of OrderCard and display the name of the owner of the order (user) 
-        // Error : firstName and lastName are undefined
             return (
                 isVisible && (
                     <div className="group/card max-w-sm bg-white rounded-lg relative">
