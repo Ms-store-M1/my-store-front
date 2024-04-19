@@ -234,17 +234,34 @@ export default function Cart() {
                                                 {item.product.price} €
                                             </p>
                                         </div>
-                                    )
-                                })
-                            }
-                        </div>
-                    ) : (
-                        <div className="flex items-center justify-center h-64">
-                            <p>Votre panier est vide.</p>
-                        </div>
-                    )
+                                    </div>
+                                    <div className="flex items-center">
+                                        <button
+                                            onClick={() => decreaseQuantity(item)}
+                                            className="px-2 py-1 bg-gray-200"
+                                        >
+                                            -
+                                        </button>
+                                        <p className="px-2">{item.quantity}</p>
+                                        <button
+                                            onClick={() => increaseQuantity(item)}
+                                            className="px-2 py-1 bg-gray-200"
+                                        >
+                                            +
+                                        </button>
+                                        </div>
+                                </div>
+                            )
+                        })
+                        }
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-center h-64">
+                        <p>Votre panier est vide.</p>
+                    </div>
+                )
                 }
-            <ToastContainer />
+                <ToastContainer />
             </div>
         </div>
     );
