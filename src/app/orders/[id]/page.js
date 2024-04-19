@@ -17,8 +17,7 @@ import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
 
-// To do : fetch order, user and products(productsFromOrder)
-// To do : Complete productOrder.api.js
+// To do : fetch user and products
 
 export default function Page({ isAdmin = true }) {
     const { id } = useParams();
@@ -50,7 +49,7 @@ export default function Page({ isAdmin = true }) {
             setLoading(true);
             try {
                 let order = await getOrder(id);
-                if (product) {
+                if (order) {
                     setOrder(order);
                 }
             } catch (err) {
