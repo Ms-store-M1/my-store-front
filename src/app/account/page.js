@@ -13,8 +13,7 @@ import menu from "@/data/menu.json";
 
 
 export default function Account() {
-    const { isLogged, accountInfo, isAdmin, checkLogin, login } =
-        useAuthStore();
+    const { isLogged, accountInfo, isAdmin, checkLogin, login } = useAuthStore();
     // const login = useAuthStore((state) => state.login);
     // const checkLogin = useAuthStore((state) => state.checkLogin);
 

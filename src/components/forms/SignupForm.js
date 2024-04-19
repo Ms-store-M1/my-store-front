@@ -35,8 +35,11 @@ const SignupForm = ({ onSignupSuccess }) => {
           password: formData.password
         }
         const login = await loginUser(loginData);
+        if (login.auth && login.token) {
+          localStorage.setItem('token', login.token);
+          onSignupSuccess(true, login.data);
+        }
         // formData.wishlist = [];
-        onSignupSuccess(true, login.data);
       }
     } else {
       onSignupSuccess(false, {});
