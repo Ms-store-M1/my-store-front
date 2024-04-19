@@ -11,9 +11,13 @@ import Alert from "@/components/UI/Alert";
 import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
-import { addToCart, getCart, updateCartItemQuantity } from "@/services/api/cart.api";
+import {
+    addToCart,
+    getCart,
+    updateCartItemQuantity,
+} from "@/services/api/cart.api";
 
-export default function Page({ onDelete, isAdmin = false }) {
+export default function Page({ onDelete }) {
     const { id } = useParams();
     const [selectedImage, setSelectedImage] = useState(null);
     const [placehodlerImage, setPlaceholderImage] = useState(null);
@@ -22,7 +26,7 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
-    const { isLogged, accountInfo, addToWishlist, checkLogin } = useAuthStore();
+    const { isLogged, accountInfo, addToWishlist, checkLogin, isAdmin } = useAuthStore();
     const [wishlisted, setWishlisted] = useState(false);
     const [isOnCart, setIsOnCart] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -30,27 +34,26 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [editMode, setEditMode] = useState(false);
     const [originalProduct, setOriginalProduct] = useState(null);
     const [cart, setCart] = useState([]);
-    const [authChecked, setAuthChecked] = useState(false); 
+    const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
         const fetchLogin = async () => {
             try {
-                await checkLogin(); 
+                await checkLogin();
             } catch (err) {
                 console.log(err);
             } finally {
-                setAuthChecked(true); 
+                setAuthChecked(true);
             }
         };
         fetchLogin();
-    }, []); 
+    }, []);
 
     const fetchCart = async () => {
         try {
             let cart = await getCart(accountInfo.id);
             setCart(cart);
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
     };
@@ -60,7 +63,6 @@ export default function Page({ onDelete, isAdmin = false }) {
             if (isLogged) {
                 fetchCart();
             }
-
         }
     }, [authChecked]);
 
@@ -85,9 +87,7 @@ export default function Page({ onDelete, isAdmin = false }) {
 
     useEffect(() => {
         const fetchPlaceholderImage = async () => {
-            const placeholder = await getBase64(
-                `${product.thumbnail}`
-            );
+            const placeholder = await getBase64(`${product.thumbnail}`);
             setPlaceholderImage(placeholder);
         };
         if (product) {
@@ -125,14 +125,19 @@ export default function Page({ onDelete, isAdmin = false }) {
     const addToCartHandler = async (product) => {
         if (isLogged) {
             try {
-                const existingProduct = cart.find(item => item.productId === product.id);
-    
+                const existingProduct = cart.find(
+                    (item) => item.productId === product.id
+                );
+
                 if (existingProduct) {
                     const _body = {
                         productId: product.id,
                         quantity: existingProduct.quantity + 1,
-                    }
-                    const response = await updateCartItemQuantity(accountInfo.id, _body);
+                    };
+                    const response = await updateCartItemQuantity(
+                        accountInfo.id,
+                        _body
+                    );
                     fetchCart();
                     setIsOnCart(true);
                     console.log(response);
@@ -140,7 +145,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     const _body = {
                         productId: product.id,
                         quantity: 1,
-                    }
+                    };
                     const response = await addToCart(accountInfo.id, _body);
                     console.log(response);
                     fetchCart();
@@ -151,22 +156,24 @@ export default function Page({ onDelete, isAdmin = false }) {
             }
         } else {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const existingProduct = cart.find(item => item.productId === product.id);
-    
+            const existingProduct = cart.find(
+                (item) => item.productId === product.id
+            );
+
             if (existingProduct) {
-                existingProduct.quantity += 1; 
+                existingProduct.quantity += 1;
             } else {
-                cart.push({ productId: product.id, product, quantity: 1 }); 
+                cart.push({ productId: product.id, product, quantity: 1 });
             }
-    
+
             localStorage.setItem("cart", JSON.stringify(cart));
             console.log("Product added to local cart successfully!");
         }
     };
-    
 
-    const handleCheckboxChange = () => {
+    const handleCheckboxChange = (i) => {
         setIsActive(!isActive); // Toggle product visibility
+        console.log(i);
     };
 
     const handleEdit = () => {
@@ -309,27 +316,26 @@ export default function Page({ onDelete, isAdmin = false }) {
                     )}
                     <Button
                         onClick={() => addToCartHandler(product)}
-                        className='transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 ${} bg-white'
+                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 ${} bg-white"
                     >
-                        {
-                            isOnCart
-                                ? "Ajouté au panier"
-                                : "Ajouter au panier"
-                        }
+                        {isOnCart ? "Ajouté au panier" : "Ajouter au panier"}
                     </Button>
-                    {isLogged ?  <Button
-                        onClick={() => onWishlist(product.id)}
-                        className="transition ease-in-out delay-150 ml-4 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
-                        disabled={wishlisted}
-                    >
-                        {wishlisted
-                            ? "Ajouté à la liste"
-                            : "Ajouter à la liste"}
-                    </Button> : ""}
+                    {isLogged ? (
+                        <Button
+                            onClick={() => onWishlist(product.id)}
+                            className="transition ease-in-out delay-150 ml-4 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
+                            disabled={wishlisted}
+                        >
+                            {wishlisted
+                                ? "Ajouté à la liste"
+                                : "Ajouter à la liste"}
+                        </Button>
+                    ) : (
+                        ""
+                    )}
                 </div>
                 <div>
-                    {isAdmin ? (
-                        editMode ? (
+                    {/* {isAdmin ? (
                             <>
                                 <Button
                                     className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
@@ -341,19 +347,20 @@ export default function Page({ onDelete, isAdmin = false }) {
                                     className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
                                     onClick={() => setShowConfirmation(true)}
                                 >
-                                    {" "}
                                     {/* Set showConfirmation to true */}
-                                    Supprimer
-                                </Button>
-                                <div className="mt-4">
-                                    <label className="inline-flex items-center">
-                                        <input
+                                    {/* Supprimer */}
+                                {/* </Button> */}
+                                {/* <div className="mt-4"> */}
+                                    {/* <label className="inline-flex items-center"> */}
+                                        {/* <input
                                             type="checkbox"
                                             className="form-checkbox h-5 w-5 text-gray-600"
                                             checked={isActive}
-                                            onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
-                                        />
-                                        <span className="ml-2 text-gray-700">
+                                            onChange={(i) =>
+                                                handleCheckboxChange(i)
+                                            } // Call handleCheckboxChange when the checkbox is changed
+                                        /> */}
+                                        {/* <span className="ml-2 text-gray-700">
                                             Actif
                                         </span>
                                     </label>
@@ -374,10 +381,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                                     Cancel
                                 </Button>
                             </>
-                        )
-                    ) : (
-                        ""
-                    )}
+                        )} */} 
                     {/* Confirmation message */}
                     {showConfirmation && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
