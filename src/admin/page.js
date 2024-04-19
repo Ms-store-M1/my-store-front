@@ -2,15 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { updateUser } from '@/services/api/user.api';
 import { fetchUsers } from '@/services/api/user.api';
+import useAuthStore from "@/stores/authStore";
 import './page.css';
 
 const Page = () => {
+    const { isLogged } = useAuthStore();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [editedUserData, setEditedUserData] = useState({});
 
     useEffect(() => {
+        if (!users) {
+            return window.location.replace('/account');
+        }else {
+            console.log('isLogged:', users);
+        }
         setLoading(true);
         fetchUsers().then((response) => {
             setUsers(response);

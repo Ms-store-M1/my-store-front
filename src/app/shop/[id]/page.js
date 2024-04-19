@@ -16,7 +16,7 @@ import { ToastContainer } from "react-toastify";
 import { showToastMessage } from "@/services/toast";
 
 
-export default function Page({ onDelete, isAdmin = false }) {
+export default function Page({ onDelete }) {
     const { id } = useParams();
     const [selectedImage, setSelectedImage] = useState(null);
     const [placehodlerImage, setPlaceholderImage] = useState(null);
@@ -25,7 +25,7 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
-    const { isLogged, accountInfo, addToWishlist, checkLogin } = useAuthStore();
+    const { isLogged, accountInfo, addToWishlist, checkLogin, isAdmin } = useAuthStore();
     const [wishlisted, setWishlisted] = useState(false);
     const [isOnCart, setIsOnCart] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -54,8 +54,7 @@ export default function Page({ onDelete, isAdmin = false }) {
         try {
             let cart = await getCart(accountInfo.id);
             setCart(cart);
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
     };
@@ -65,7 +64,6 @@ export default function Page({ onDelete, isAdmin = false }) {
             if (isLogged) {
                 fetchCart();
             }
-
         }
     }, [authChecked]);
 
@@ -90,9 +88,7 @@ export default function Page({ onDelete, isAdmin = false }) {
 
     useEffect(() => {
         const fetchPlaceholderImage = async () => {
-            const placeholder = await getBase64(
-                `${product.thumbnail}`
-            );
+            const placeholder = await getBase64(`${product.thumbnail}`);
             setPlaceholderImage(placeholder);
         };
         if (product) {
@@ -138,8 +134,11 @@ export default function Page({ onDelete, isAdmin = false }) {
                     const _body = {
                         productId: product.id,
                         quantity: existingProduct.quantity + 1,
-                    }
-                    const response = await updateCartItemQuantity(accountInfo.id, _body);
+                    };
+                    const response = await updateCartItemQuantity(
+                        accountInfo.id,
+                        _body
+                    );
                     fetchCart();
                     fetchLogin();
                     setIsOnCart(true);
@@ -148,7 +147,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     const _body = {
                         productId: product.id,
                         quantity: 1,
-                    }
+                    };
                     const response = await addToCart(accountInfo.id, _body);
                     fetchCart();
                     showToastMessage(true, 'Produit ajouté au panier');
@@ -173,9 +172,9 @@ export default function Page({ onDelete, isAdmin = false }) {
         }
     };
 
-
-    const handleCheckboxChange = () => {
+    const handleCheckboxChange = (i) => {
         setIsActive(!isActive); // Toggle product visibility
+        console.log(i);
     };
 
     const handleEdit = () => {
@@ -318,13 +317,9 @@ export default function Page({ onDelete, isAdmin = false }) {
                     )}
                     <Button
                         onClick={() => addToCartHandler(product)}
-                        className='transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 ${} bg-white'
+                        className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 ${} bg-white"
                     >
-                        {
-                            isOnCart
-                                ? "Ajouté au panier"
-                                : "Ajouter au panier"
-                        }
+                        {isOnCart ? "Ajouté au panier" : "Ajouter au panier"}
                     </Button>
                     {isLogged ? <Button
                         onClick={() => onWishlist(product.id)}
@@ -337,8 +332,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     </Button> : ""}
                 </div>
                 <div>
-                    {isAdmin ? (
-                        editMode ? (
+                    {/* {isAdmin ? (
                             <>
                                 <Button
                                     className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-blue-500 font-medium text-center text-blue-500 bg-white hover:bg-blue-500 hover:text-white"
@@ -350,19 +344,20 @@ export default function Page({ onDelete, isAdmin = false }) {
                                     className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-red-500 bg-white hover:bg-red-500 hover:text-white"
                                     onClick={() => setShowConfirmation(true)}
                                 >
-                                    {" "}
                                     {/* Set showConfirmation to true */}
-                                    Supprimer
-                                </Button>
-                                <div className="mt-4">
-                                    <label className="inline-flex items-center">
-                                        <input
+                                    {/* Supprimer */}
+                                {/* </Button> */}
+                                {/* <div className="mt-4"> */}
+                                    {/* <label className="inline-flex items-center"> */}
+                                        {/* <input
                                             type="checkbox"
                                             className="form-checkbox h-5 w-5 text-gray-600"
                                             checked={isActive}
-                                            onChange={handleCheckboxChange} // Call handleCheckboxChange when the checkbox is changed
-                                        />
-                                        <span className="ml-2 text-gray-700">
+                                            onChange={(i) =>
+                                                handleCheckboxChange(i)
+                                            } // Call handleCheckboxChange when the checkbox is changed
+                                        /> */}
+                                        {/* <span className="ml-2 text-gray-700">
                                             Actif
                                         </span>
                                     </label>
@@ -383,10 +378,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                                     Cancel
                                 </Button>
                             </>
-                        )
-                    ) : (
-                        ""
-                    )}
+                        )} */} 
                     {/* Confirmation message */}
                     {showConfirmation && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">

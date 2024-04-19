@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
 import Button from '../UI/Button';
 import useAuthStore from '@/stores/authStore';
+import menu from "@/data/menu.json";
 import { updateUser } from '@/services/api/user.api';
 import { ToastContainer } from "react-toastify";
 import { showToastMessage } from "@/services/toast";
 
 
-const Profile = ({ accountInfo }) => {
+const Profile = ({ accountInfo, key}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
   });
+  const [keysatustate, setKeysatustate] = useState(key);
   const [userInfoBackup, setUserInfoBackup] = useState({});
   const { isLogged } = useAuthStore();
   const logout = useAuthStore(state => state.logout);
-
   const translations = {
     lastname: 'Nom',
     firstname: 'Prénom',
@@ -34,7 +35,7 @@ const Profile = ({ accountInfo }) => {
       delete accountInfoObject.commande;
       setUserInfo(accountInfoObject);
     }
-  }, [accountInfo])
+  }, [accountInfo, key])
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -85,7 +86,11 @@ const Profile = ({ accountInfo }) => {
               className='transition ease-in-out delay-150 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 ${} bg-white'>
               Modifier
             </Button>
-            <button onClick={() => logout()}
+            <button onClick={() => 
+             { logout()
+              // enlever le admin du navmenu si pas admin
+              menu.splice(2, 1)}
+            }
               className='transition ease-in-out delay-150 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-black-500 ${} bg-white'>
               Déconnexion
             </button>

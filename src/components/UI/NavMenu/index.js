@@ -5,9 +5,20 @@ import useAuthStore from "@/stores/authStore";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import menu from "@/data/menu.json";
 const Index = ({menu, color}) => {
 
-  const { isLogged, accountInfo, checkLogin } = useAuthStore();
+  const { isAdmin, isLogged, accountInfo, checkLogin } = useAuthStore();
+  const [menuVerif, setMenuVerif] = useState(menu);
+  // vérifier si l'utilisateur est admin pour afficher le lien admin
+  useEffect(() => {
+    console.log("isAdlinnin",isAdmin);
+    if (isAdmin) {
+      menu.push({name: "Admin", path: "/admin"});
+      console.log("menu",menu);
+    }
+  }, [menu, isAdmin]);
+
   const [cartQuantity, setCartQuantity] = useState(0);
 
   const colors = {
