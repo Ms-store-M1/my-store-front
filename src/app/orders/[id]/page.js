@@ -17,6 +17,7 @@ import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
 
 // To do : fetch products
+// To do : re-use productsGrid
 
 export default function Page({ isAdmin = true }) {
     const { id } = useParams();
@@ -210,7 +211,6 @@ export default function Page({ isAdmin = true }) {
                     )}
                 </div>
             </div>
-            <h1>Work in progress</h1>
         </div>
     );
 }
