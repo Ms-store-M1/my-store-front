@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 
 const Wishlist = ({ wishlist }) => {
 
-    const deleteItem = (item) => {
-
-    }
+    console.log('wishlist:', wishlist);
 
 
     return (
         <div className="p-4">
             {
-                wishlist.length > 0 ? (
+                wishlist && wishlist.length > 0 ? (
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">ma liste de souhait.</h2>
                         {

@@ -11,11 +11,10 @@ import Alert from "@/components/UI/Alert";
 import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
-import {
-    addToCart,
-    getCart,
-    updateCartItemQuantity,
-} from "@/services/api/cart.api";
+import { addToCart, getCart, updateCartItemQuantity } from "@/services/api/cart.api";
+import { ToastContainer } from "react-toastify";
+import { showToastMessage } from "@/services/toast";
+
 
 export default function Page({ onDelete }) {
     const { id } = useParams();
@@ -35,7 +34,7 @@ export default function Page({ onDelete }) {
     const [originalProduct, setOriginalProduct] = useState(null);
     const [cart, setCart] = useState([]);
     const [authChecked, setAuthChecked] = useState(false);
-
+    
     useEffect(() => {
         const fetchLogin = async () => {
             try {
@@ -116,7 +115,9 @@ export default function Page({ onDelete }) {
     const onWishlist = async (productId) => {
         const req = await addToWishlist(productId);
         setWishlisted(true);
+        showToastMessage(true, 'Produit ajouté à la liste de souhait');
     };
+    
     const handleDelete = () => {
         setShowConfirmation(false); // Hide confirmation message
         onDelete(product?.id); // Call onDelete function
@@ -125,9 +126,7 @@ export default function Page({ onDelete }) {
     const addToCartHandler = async (product) => {
         if (isLogged) {
             try {
-                const existingProduct = cart.find(
-                    (item) => item.productId === product.id
-                );
+                const existingProduct = cart.find(item => item.productId === product.id);
 
                 if (existingProduct) {
                     const _body = {
@@ -140,6 +139,7 @@ export default function Page({ onDelete }) {
                     );
                     fetchCart();
                     setIsOnCart(true);
+                    showToastMessage(true, 'Produit ajouté au panier');
                     console.log(response);
                 } else {
                     const _body = {
@@ -149,16 +149,16 @@ export default function Page({ onDelete }) {
                     const response = await addToCart(accountInfo.id, _body);
                     console.log(response);
                     fetchCart();
+                    showToastMessage(true, 'Produit ajouté au panier');
                     setIsOnCart(true);
                 }
             } catch (error) {
                 console.error("Error adding product to cart:", error);
+                showToastMessage(false);
             }
         } else {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const existingProduct = cart.find(
-                (item) => item.productId === product.id
-            );
+            const existingProduct = cart.find(item => item.productId === product.id);
 
             if (existingProduct) {
                 existingProduct.quantity += 1;
@@ -320,19 +320,15 @@ export default function Page({ onDelete }) {
                     >
                         {isOnCart ? "Ajouté au panier" : "Ajouter au panier"}
                     </Button>
-                    {isLogged ? (
-                        <Button
-                            onClick={() => onWishlist(product.id)}
-                            className="transition ease-in-out delay-150 ml-4 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
-                            disabled={wishlisted}
-                        >
-                            {wishlisted
-                                ? "Ajouté à la liste"
-                                : "Ajouter à la liste"}
-                        </Button>
-                    ) : (
-                        ""
-                    )}
+                    {isLogged ? <Button
+                        onClick={() => onWishlist(product.id)}
+                        className="transition ease-in-out delay-150 ml-4 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
+                        disabled={wishlisted}
+                    >
+                        {wishlisted
+                            ? "Ajouté à la liste"
+                            : "Ajouter à la liste"}
+                    </Button> : ""}
                 </div>
                 <div>
                     {/* {isAdmin ? (
@@ -411,6 +407,7 @@ export default function Page({ onDelete }) {
                     )}
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }
