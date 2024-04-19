@@ -24,7 +24,7 @@ class Index extends Component {
                 isVisible && (
                     <div className="group/card max-w-sm bg-white rounded-lg relative">
                         {/* Number of the order */}
-                        <h3 className="text-md mb-3">Numéro {order.id}</h3>
+                        <h3 className="text-md mb-3">Commande {order.id}</h3>
 
                         {/* Display name of the customer and make it lead to customer's profile if clicked */}
                         <h3 className="text-md mb-3">
