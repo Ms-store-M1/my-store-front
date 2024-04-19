@@ -4,6 +4,7 @@ import { getCart, clearCart, updateCartItemQuantity, removeProductFromCart, addT
 import useAuthStore from "@/stores/authStore"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { handlePayment } from "@/services/api/stripe.api";
 
 export default function Cart() {
 
@@ -150,23 +151,18 @@ export default function Cart() {
 
     };
 
-    const handleCheckout = () => {
-        if (!isLogged) {
-            router.push('/account?from=cart')
-        } else {
-            router.push('/checkout')
+    const handleCheckoutClick = async () => {
+        if (!cart) {
+            console.error('Aucun article dans le panier');
+            return;
         }
-    }
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p>Chargement...</p>
-            </div>
-        );
-    } else {
-
-    }
+        const result = await handlePayment(cart);
+        if (result.error) {
+            console.error('Erreur de paiement', result.error);
+        } else {
+            window.location.href = result.url;
+        }
+    };
 
     return (
         <div className="min-h-screen w-full px-2 bg-gray-50">
@@ -175,10 +171,10 @@ export default function Cart() {
                 {
                     cart.length > 0 && (
                         <button
-                            onClick={() => handleCheckout()}
+                            onClick={() => handleCheckoutClick()}
                             className="p-2 border border-black-500"
                         >
-                            Commander
+                            Commander avec Stripe
                         </button>
                     )
                 }

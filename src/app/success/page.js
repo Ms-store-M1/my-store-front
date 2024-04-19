@@ -1,100 +1,68 @@
 "use client"
 
-import { getCart, clearCart, updateCartItemQuantity, removeProductFromCart, addToCart } from "@/services/api/cart.api";
-import useAuthStore from "@/stores/authStore"
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 
-export default function Cart() {
+function Success() {
+  const router = useRouter();
+  const params = useParams();
+  const [orderDetails, setOrderDetails] = useState(null);
+  // const [loading, setLoading] = useState(true);
 
-    const { isLogged, accountInfo, checkLogin } = useAuthStore();
-    const [cart, setCart] = useState([]); // [ { productId: 1, product: {}, quantity: 1 }
-    const [authChecked, setAuthChecked] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter();
+  useEffect(() => {
+    if (router.isReady) {
+      const session_id = params.session_id;
+      console.log('session_id:', session_id);
+      if (!session_id) {
+        alert("Aucune information de session trouvée.");
+        router.navigate('/cart');
+        return;
+      }
 
-    useEffect(() => {
-        const fetchLogin = async () => {
-            try {
-                await checkLogin();
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setAuthChecked(true);
-            }
-        };
-        fetchLogin();
-    }, []);
-
-    useEffect(() => {
-        if (authChecked) {
-            if (!isLogged) {
-                const getCartFromLocalStorage = () => {
-                    const localCart = localStorage.getItem("cart");
-                    if (localCart) {
-                        const cartArray = JSON.parse(localCart);
-                        setCart(cartArray);
-                    }
-                    setLoading(false);
-                };
-                getCartFromLocalStorage();
-            } else {
-
-                // fetchCart();
-            }
-        }
-    }, [authChecked, isLogged]);
-
-    const fetchCart = async () => {
-        setLoading(true);
+      const fetchOrderDetails = async () => {
         try {
-            const localCart = JSON.parse(localStorage.getItem("cart")) || [];
-
-            if (localCart.length > 0) {
-                await clearCart(accountInfo.id);
-
-                const addToCartPromises = localCart.map(el => {
-                    const newItem = {
-                        productId: el.productId,
-                        quantity: el.quantity,
-                    };
-                    return addToCart(accountInfo.id, newItem);
-                });
-
-                await Promise.all(addToCartPromises);
-            }
-            localStorage.removeItem("cart");
-            const updatedCart = await getCart(accountInfo.id);
-            if (updatedCart) {
-                setCart(updatedCart);
-                console.log(updatedCart);
-
-            } else {
-                setCart([]);
-            }
-        } catch (err) {
-            console.error("Erreur lors de la mise à jour du panier:", err);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order/confirm?session_id=${session_id}`);
+          const data = await response.json();
+          if (response.ok) {
+            setOrderDetails(data);
+          } else {
+            throw new Error(data.message || "Erreur lors de la récupération des détails de la commande.");
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des détails de la commande:', error);
+          alert(error.message);
+          router.navigate('/cart');
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
-    };
+      };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p>Chargement...</p>
-            </div>
-        );
-    } else {
-
+      fetchOrderDetails();
     }
+  }, [router.isReady, params]);
 
-    return (
-        <div className="min-h-screen w-full px-2 bg-gray-50">
-            <div className="flex justify-between my-2">
-                <h1 className="text-3xl font-bold pt-2 pl-2">merci pour votre commande.</h1>
-            </div>
-        </div>
+  // if (loading) {
+  //   return <div className="flex justify-center items-center min-h-screen">
+  //     <p>Chargement des détails de la commande...</p>
+  //   </div>;
+  // }
 
-    )
+  if (!orderDetails) {
+    return <div className="flex justify-center items-center min-h-screen">
+      <p>Une erreur est survenue lors de la commande.</p>
+    </div>;
+  }
+
+  return (
+    <div className="min-h-screen w-full px-2 bg-gray-50 flex justify-center items-center">
+      <div>
+        <h1 className="text-3xl font-bold">Merci pour votre commande !</h1>
+        <p>ID de commande : {orderDetails.id}</p>
+        <p>Statut du paiement : {orderDetails.payment_status}</p>
+        <p>Total payé : {(orderDetails.amount_total / 100).toFixed(2)} €</p>
+      </div>
+    </div>
+  );
 }
+
+export default Success;
