@@ -1,56 +1,69 @@
 "use client";
 import React, { Component } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Button from '../../UI/Button';
 
 class Index extends Component {
-    constructor(props) {
-        super(props);
+    formatOrderDate(orderDate) {
+        const date = new Date(orderDate);
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
     }
 
     render() {
-        const { order, isAdmin } = this.props;
-
+        const { order, user, isAdmin } = this.props;
+        const formattedDate = this.formatOrderDate(order.orderDate);
         const isVisible = isAdmin;
 
-        return (
-            isVisible && (
-                <div className="group/card max-w-sm bg-white rounded-lg relative">
-                    {/* Number of the order */}
-                    <h3 className="text-md mb-3">{order.id}</h3>
+        console.log(order);
+        console.log(order.status);
+        console.log(user);
+        console.log(user.data.firstname);
 
-                    {/* Status of the order */}
-                    <h2 className="text-md mb-3">{order.status}</h2>
+        // Next step : Work on the look of OrderCard and display the name of the owner of the order (user) 
+        // Error : firstName and lastName are undefined
+            return (
+                isVisible && (
+                    <div className="group/card max-w-sm bg-white rounded-lg relative">
+                        {/* Number of the order */}
+                        <h3 className="text-md mb-3">Numéro {order.id}</h3>
 
-                    {/* Date of the order */}
-                    <h3 className="text-md mb-3">{order.orderDate}</h3>
+                        {/* Display name of the customer and make it lead to customer's profile if clicked */}
+                        <h3 className="text-md mb-3">
+                            <Link href={`../account/${order.userId}`}>
+                                {`${user.data.firstname} ${user.data.lastname}`}
+                            </Link>
+                        </h3>
 
-                    {/* Shipping method */}
-                    <h2 className="text-md mb-3">{order.deliveryMode}</h2>
+                        {/* Status of the order */}
+                        <h2 className="text-md mb-3">{order.status}</h2>
 
-                    {/* Display name of the customer and make it lead to customer's profile if clicked */}
-                    <h3 className="text-md mb-3">
-                        <Link href={`../account/${order.userId}`}>
-                            <a>{`${order.user.firstName} ${order.user.lastName}`}</a>
-                        </Link>
-                    </h3>
+                        {/* Date of the order */}
+                        <h3 className="text-md mb-3">{formattedDate}</h3>
+
+                        {/* Shipping method */}
+                        <h2 className="text-md mb-3">Livraison : {order.deliveryMode}</h2>
                     
-                    {/* Number of products within the order */}
-                    <h3 className="text-md mb-3">{order.totalItems}</h3>
+                        {/* Number of products within the order */}
+                        <h3 className="text-md mb-3">{order.totalItems} articles</h3>
 
-                    {/* Total price of the order */}
-                    <h2 className="text-md mb-3">{order.totalAmount}€</h2>
+                        {/* Total price of the order */}
+                        <h2 className="text-md mb-3">{order.totalAmount}€ en tout</h2>
 
-                    {/* Button that leads to the details of the order */}
-                    <Link href={`/orders/${order.id}`}>
-                        <a>
+                        {/* Button that leads to the details of the order */}
+                        <Link href={`/orders/${order.id}`}>
                             <Button>Plus de détails</Button>
-                        </a>
-                    </Link>
+                        </Link>
 
-                </div>
-            )
-        );
+                    </div>
+                )
+            );
     }
 }
+
+export default Index;
