@@ -329,13 +329,13 @@ export default function Page({ onDelete, isAdmin = false }) {
                                         className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-green-500 font-medium text-center text-green-500 bg-white hover:bg-green-500 hover:text-white"
                                         onClick={handleConfirmEdit}
                                     >
-                                        Confirm
+                                        Confirmer
                                     </Button>
                                     <Button
                                         className="transition ease-in-out delay-150 mt-4 inline-flex items-center px-4 py-3 text-sm border border-gray-500 font-medium text-center text-gray-500 bg-white hover:bg-gray-500 hover:text-white"
                                         onClick={handleCancelEdit}
                                     >
-                                        Cancel
+                                        Annuler
                                     </Button>
                                 </>
                             ) : (
