@@ -13,3 +13,11 @@ import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
 import { getProductsFromOrder, removeProductFromOrder, updateProductQuantityInOrder, clearProductsFromOrder } from "@/services/api/productOrder.api.js";
 
+export default function Page({ isAdmin = true }) {
+    
+    return (
+        <div className="container mx-auto py-12">
+            <h1>Work in progress</h1>
+        </div>
+    );
+}
