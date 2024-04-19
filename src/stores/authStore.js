@@ -1,14 +1,19 @@
-import { addToWishlist, getUser } from '@/services/api/user.api';
-import { create } from 'zustand';
+import { addToWishlist, getUser } from "@/services/api/user.api";
+import { create } from "zustand";
 
 function decodeJWT(token) {
-  const base64Url = token.split('.')[1]; // Obtient le payload du token
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Remplace les caractères URL-safe
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+    const base64Url = token.split(".")[1]; // Obtient le payload du token
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); // Remplace les caractères URL-safe
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split("")
+            .map(function (c) {
+                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+    );
 
-  return JSON.parse(jsonPayload);
+    return JSON.parse(jsonPayload);
 }
 
 const useAuthStore = create((set) => ({

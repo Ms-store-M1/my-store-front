@@ -1,6 +1,20 @@
+"use client";
 import Link from "next/link";
-
+import useAuthStore from "@/stores/authStore";
+import { useEffect, useState } from "react";
+import menu from "@/data/menu.json";
 const Index = ({menu, color}) => {
+
+  const { isAdmin } = useAuthStore();
+  const [menuVerif, setMenuVerif] = useState(menu);
+  // vérifier si l'utilisateur est admin pour afficher le lien admin
+  useEffect(() => {
+    console.log("isAdlinnin",isAdmin);
+    if (isAdmin) {
+      menu.push({name: "Admin", path: "/admin"});
+      console.log("menu",menu);
+    }
+  }, [menu, isAdmin]);
 
   const colors = {
     scale: "scale-500",
@@ -17,7 +31,8 @@ const Index = ({menu, color}) => {
             <li key={index} className="lg:flex-1">
               <Link 
                 href={item.path} 
-                className={`text-md font-normal leading-6 text-${colors[color]} text-base hover:text-slate-500`}>
+                className={`text-md font-normal leading-6 text-${colors[color]} text-base hover:text-slate-500`} onClick={() => {setMenuVerif(menu)}}
+                >
                 {item.name}
               </Link>
             </li>

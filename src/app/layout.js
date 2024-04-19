@@ -3,6 +3,7 @@ import Footer from '@/components/partials/Footer';
 import '@/assets/styles/style.scss';
 import { DM_Serif_Display, Work_Sans } from 'next/font/google';
 
+
 const dm_serif_display = DM_Serif_Display({
     subsets: ['latin'],
     weight: ['400']
