@@ -25,7 +25,7 @@ export default function Page({ onDelete }) {
     const [slideIndex, setSlideIndex] = useState(0);
     const [showFancyBox, setShowFancyBox] = useState(false);
     const [error, setError] = useState(null);
-    const { isLogged, accountInfo, addToWishlist, checkLogin, isAdmin } = useAuthStore();
+    const { isLogged, accountInfo, addToWishlist, checkLogin, isAdmin, setCartQty } = useAuthStore();
     const [wishlisted, setWishlisted] = useState(false);
     const [isOnCart, setIsOnCart] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -162,13 +162,13 @@ export default function Page({ onDelete }) {
             const existingProduct = cart.find(item => item.productId === product.id);
 
             if (existingProduct) {
-                existingProduct.quantity += 1;
+                existingProduct.quantity++;
             } else {
                 cart.push({ productId: product.id, product, quantity: 1 });
             }
-
             localStorage.setItem("cart", JSON.stringify(cart));
-            console.log("Product added to local cart successfully!");
+            await setCartQty();
+            showToastMessage(true, 'Produit ajouté au panier');
         }
     };
 

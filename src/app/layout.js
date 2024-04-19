@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
 
     return (
         <html lang="en">
-            <body className={`${dm_serif_display.className} ${work_sans.className}`}>
+            <body className={`overflow-x-hidden ${dm_serif_display.className} ${work_sans.className}`}>
                 <Header />
                 <main>
                     {children}

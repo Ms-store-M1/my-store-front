@@ -14,7 +14,7 @@ import { ToastContainer } from "react-toastify";
 import { showToastMessage } from "@/services/toast";
 
 export default function Cart() {
-    const { isLogged, accountInfo, checkLogin } = useAuthStore();
+    const { isLogged, accountInfo, checkLogin, setCartQty } = useAuthStore();
     const [cart, setCart] = useState([]); // [ { productId: 1, product: {}, quantity: 1 }
     const [authChecked, setAuthChecked] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -95,6 +95,9 @@ export default function Cart() {
 
             setCart(updatedCart);
             localStorage.setItem("cart", JSON.stringify(updatedCart));
+            setCartQty();
+            showToastMessage(true, 'Produit ajouté au panier');
+
         } else {
             const _body = {
                 productId: product.productId,
@@ -127,6 +130,8 @@ export default function Cart() {
                 );
                 setCart(updatedCart);
                 localStorage.setItem("cart", JSON.stringify(updatedCart));
+                setCartQty();
+                showToastMessage(true, 'Produit supprimé du panier');
             } else {
                 const updatedCart = cart.map((item) => {
                     if (
@@ -139,6 +144,8 @@ export default function Cart() {
                 });
                 setCart(updatedCart);
                 localStorage.setItem("cart", JSON.stringify(updatedCart));
+                setCartQty();
+                showToastMessage(true, 'Produit retiré du panier');
             }
         } else {
             if (product.quantity === 1) {

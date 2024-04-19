@@ -8,19 +8,8 @@ import { useEffect, useState } from "react";
 import menu from "@/data/menu.json";
 const Index = ({menu, color}) => {
 
-  const { isAdmin, isLogged, accountInfo, checkLogin } = useAuthStore();
+  const { isAdmin, isLogged, accountInfo, checkLogin, userCartQty, setCartQty } = useAuthStore();
   const [menuVerif, setMenuVerif] = useState(menu);
-  // vérifier si l'utilisateur est admin pour afficher le lien admin
-  useEffect(() => {
-    console.log("isAdlinnin",isAdmin);
-    if (isAdmin) {
-      menu.push({name: "Admin", path: "/admin"});
-      console.log("menu",menu);
-    }
-  }, [menu, isAdmin]);
-
-  const [cartQuantity, setCartQuantity] = useState(0);
-
   const colors = {
     scale: "scale-500",
     black: "black",
@@ -29,28 +18,29 @@ const Index = ({menu, color}) => {
   }
 
   useEffect(() => {
+    const fetchCartQty = async () => {
+      await setCartQty();
+    }
+    fetchCartQty();
+  }, [accountInfo]);
+
+  // vérifier si l'utilisateur est admin pour afficher le lien admin
+  useEffect(() => {
+    if (isAdmin) {
+      menu.push({name: "Admin", path: "/admin"});
+    }
+  }, [menu, isAdmin]);
+
+
+
+  useEffect(() => {
     const fetchLogin = async () => {
       if (!isLogged) {
         await checkLogin();
       }
     }
 
-    const fetchCart = async () => {
-      if (isLogged) {
-        setCartQuantity(0);
-        let cartQty = 0;
-        const cart = await getCart(accountInfo.id);
-        if (cart) {
-          cart.forEach(item => {
-            cartQty += item.quantity;
-          })
-          setCartQuantity(cartQty);
-        }
-      }
-    }
-
     fetchLogin();
-    fetchCart();
 
   }, [accountInfo]);
 
@@ -66,7 +56,7 @@ const Index = ({menu, color}) => {
                 {
                   item.name === 'Panier' ? (
                     <span>
-                      {item.name} {cartQuantity > 0 && `(${cartQuantity})`}
+                      {item.name} {( userCartQty > 0) && `(${userCartQty})`}
                     </span>
                   ) : item.name
                 }

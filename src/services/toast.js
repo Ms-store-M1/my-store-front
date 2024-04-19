@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export const showToastMessage = (success, message) => {
     if (success) {
         toast.success(message, {
-            position: "top-right",
+            position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
             closeOnClick: true,
@@ -14,7 +14,7 @@ export const showToastMessage = (success, message) => {
         });
     } else {
         toast.error("Erreur lors de l'ajout du produit au panier", {
-            position: "top-right",
+            position: "top-left",
             autoClose: 1500,
             hideProgressBar: false,
             closeOnClick: true,
