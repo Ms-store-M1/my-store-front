@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Button from '../UI/Button';
-import { createUser } from '@/services/api/user.api';
+import { createUser, loginUser } from '@/services/api/user.api';
 
 const SignupForm = ({ onSignupSuccess }) => {
   const [formData, setFormData] = useState({
@@ -28,9 +28,16 @@ const SignupForm = ({ onSignupSuccess }) => {
     const isFormValid = Object.values(formData).every(value => value.trim() !== '');
 
     if (isFormValid) {
-      const create = createUser(formData);
-      // formData.wishlist = [];
-      onSignupSuccess(true, formData);
+      const create = await createUser(formData);
+      if (create) {
+        const loginData = {
+          mail: formData.mail,
+          password: formData.password
+        }
+        const login = await loginUser(loginData);
+        // formData.wishlist = [];
+        onSignupSuccess(true, login.data);
+      }
     } else {
       onSignupSuccess(false, {});
     }
