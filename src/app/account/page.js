@@ -23,7 +23,6 @@ export default function Account() {
     const [isSignupSuccess, setIsSignupSuccess] = useState(null);
     const [activeTab, setActiveTab] = useState("profile");
     const [error, setError] = useState(false);
-    const [key, setKey] = useState(Math.random());
 
     const handleSignupSuccess = (success, data) => {
         setIsSignupSuccess(success);
@@ -49,7 +48,6 @@ export default function Account() {
     };
 
     useEffect(() => {
-        setKey(Math.random());
         setLoading(true);
         const checkLoginStatus = async () => {
             try {
@@ -106,7 +104,7 @@ export default function Account() {
                         <>
                             {activeTab === "profile" && (
                                 <div>
-                                    <Profile accountInfo={accountInfo} key={key} />
+                                    <Profile accountInfo={accountInfo} />
                                 </div>
                             )}
                             {activeTab === "orders" && (
