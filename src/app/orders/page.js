@@ -58,7 +58,7 @@ export default async function Page({
     
         return (
             <div className="container mx-auto">
-                <TitlePage title="Liste des commandes des clients" />
+                <TitlePage title="Liste des commandes" />
                 <OrdersCounter ordersLength={orders.length} />
                 <OrdersGrid orders={orders} users={users} isAdmin={isAdmin} />
                 <div className="flex justify-center mb-24">
