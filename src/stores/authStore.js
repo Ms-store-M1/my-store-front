@@ -3,8 +3,9 @@ import { addToWishlist, getUser } from "@/services/api/user.api";
 import { create } from "zustand";
 
 function decodeJWT(token) {
-  const base64Url = token.split(".")[1]; // Obtient le payload du token
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); // Remplace les caractères URL-safe
+  const base64Url = token.split(".")[1]; 
+  if (!base64Url) return console.error('Token is not valid');
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); 
   const jsonPayload = decodeURIComponent(
     atob(base64)
       .split("")
@@ -30,13 +31,18 @@ const useAuthStore = create((set, get) => ({
   checkLogin: async () => {
     const token = localStorage.getItem('token');
     if (token && token != undefined) {
-      set(() => ({ isLogged: true }));
+      // set(() => ({ isLogged: true }));
       const payload = decodeJWT(token);
-      const userId = payload.id;
-      const isAdmin = payload.isAdmin === true;
-
-      const user = await getUser(userId);
-      set(() => ({ isLogged: true, isAdmin: isAdmin, accountInfo: user.data }));
+      let userId;
+      let isAdmin = false;
+      if (payload) {
+       userId = payload.id;
+       isAdmin = payload.isAdmin === true;
+       const user = await getUser(userId);
+       if (user.sucess) {
+         set(() => ({ isLogged: true, isAdmin: isAdmin, accountInfo: user.data }));
+       }
+      }
     }
   },
   addToWishlist: async (productId) => {
