@@ -36,17 +36,19 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [authChecked, setAuthChecked] = useState(false);
     
     useEffect(() => {
-        const fetchLogin = async () => {
-            try {
-                await checkLogin();
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setAuthChecked(true);
-            }
-        };
+        
         fetchLogin();
     }, []);
+
+    const fetchLogin = async () => {
+        try {
+            await checkLogin();
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setAuthChecked(true);
+        }
+    };
 
     const fetchCart = async () => {
         try {
@@ -121,7 +123,7 @@ export default function Page({ onDelete, isAdmin = false }) {
         setWishlisted(true);
         showToastMessage(true, 'Produit ajouté à la liste de souhait');
     };
-    
+
     const handleDelete = () => {
         setShowConfirmation(false); // Hide confirmation message
         onDelete(product?.id); // Call onDelete function
@@ -139,16 +141,15 @@ export default function Page({ onDelete, isAdmin = false }) {
                     }
                     const response = await updateCartItemQuantity(accountInfo.id, _body);
                     fetchCart();
+                    fetchLogin();
                     setIsOnCart(true);
                     showToastMessage(true, 'Produit ajouté au panier');
-                    console.log(response);
                 } else {
                     const _body = {
                         productId: product.id,
                         quantity: 1,
                     }
                     const response = await addToCart(accountInfo.id, _body);
-                    console.log(response);
                     fetchCart();
                     showToastMessage(true, 'Produit ajouté au panier');
                     setIsOnCart(true);

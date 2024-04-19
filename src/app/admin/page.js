@@ -25,7 +25,6 @@ const Page = () => {
         } else {
             setIsAuthorized(true);
         fetchUsers().then((response) => {
-            console.log('Response from fetchUsers:', response);
             setUsers(response);
             setLoading(false);
         }).catch(err => {

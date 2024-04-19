@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 
 const Wishlist = ({ wishlist }) => {
 
-    console.log('wishlist:', wishlist);
-
-
     return (
         <div className="p-4">
             {

@@ -4,6 +4,8 @@ import { getCart, clearCart, updateCartItemQuantity, removeProductFromCart, addT
 import useAuthStore from "@/stores/authStore"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import { showToastMessage } from "@/services/toast";
 
 export default function Cart() {
 
@@ -13,16 +15,17 @@ export default function Cart() {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    const fetchLogin = async () => {
+        try {
+            await checkLogin();
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setAuthChecked(true);
+        }
+    };
+
     useEffect(() => {
-        const fetchLogin = async () => {
-            try {
-                await checkLogin();
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setAuthChecked(true);
-            }
-        };
         fetchLogin();
     }, []);
 
@@ -78,7 +81,6 @@ export default function Cart() {
     };
 
     const increaseQuantity = async (product) => {
-        console.log(product);
         if (!isLogged) {
             const updatedCart = cart.map(item => {
                 if (item.productId === product.productId) {
@@ -103,6 +105,9 @@ export default function Cart() {
                     return item;
                 });
                 setCart(updatedCart);
+                fetchLogin();
+                console.log(product);
+                showToastMessage(true, 'Produit ajouté au panier');
             }
         }
     };
@@ -129,6 +134,8 @@ export default function Cart() {
                 if (response) {
                     const updatedCart = cart.filter(item => item.productId !== product.productId);
                     setCart(updatedCart);
+                    fetchLogin();
+                    showToastMessage(true, 'Produit retiré du panier');
                 }
             } else {
                 const _body = {
@@ -144,6 +151,8 @@ export default function Cart() {
                         return item;
                     });
                     setCart(updatedCart);
+                    fetchLogin();
+                    showToastMessage(true, 'Produit retiré du panier');
                 }
             }
         }
@@ -222,6 +231,7 @@ export default function Cart() {
                         </div>
                     )
                 }
+            <ToastContainer />
             </div>
         </div>
     )

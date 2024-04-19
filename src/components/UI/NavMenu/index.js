@@ -1,6 +1,14 @@
+'use client';
+
+import { getCart } from "@/services/api/cart.api";
+import useAuthStore from "@/stores/authStore";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const Index = ({menu, color}) => {
+
+  const { isLogged, accountInfo, checkLogin } = useAuthStore();
+  const [cartQuantity, setCartQuantity] = useState(0);
 
   const colors = {
     scale: "scale-500",
@@ -9,16 +17,48 @@ const Index = ({menu, color}) => {
     white: "white"
   }
 
+  useEffect(() => {
+    const fetchLogin = async () => {
+      if (!isLogged) {
+        await checkLogin();
+      }
+    }
+
+    const fetchCart = async () => {
+      if (isLogged) {
+        setCartQuantity(0);
+        let cartQty = 0;
+        const cart = await getCart(accountInfo.id);
+        if (cart) {
+          cart.forEach(item => {
+            cartQty += item.quantity;
+          })
+          setCartQuantity(cartQty);
+        }
+      }
+    }
+
+    fetchLogin();
+    fetchCart();
+
+  }, [accountInfo]);
+
   return (
     <nav>
       <ul className="flex p-6 items-center justify-between lg:gap-x-12">
         {
           menu.map((item, index) => (
-            <li key={index} className="lg:flex-1">
+            <li key={index} className="lg:flex-2">
               <Link 
                 href={item.path} 
                 className={`text-md font-normal leading-6 text-${colors[color]} text-base hover:text-slate-500`}>
-                {item.name}
+                {
+                  item.name === 'Panier' ? (
+                    <span>
+                      {item.name} {cartQuantity > 0 && `(${cartQuantity})`}
+                    </span>
+                  ) : item.name
+                }
               </Link>
             </li>
           ))

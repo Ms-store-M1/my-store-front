@@ -67,7 +67,6 @@ export default function Cart() {
             const updatedCart = await getCart(accountInfo.id);
             if (updatedCart) {
                 setCart(updatedCart);
-                console.log(updatedCart);
 
             } else {
                 setCart([]);

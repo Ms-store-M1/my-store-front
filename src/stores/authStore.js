@@ -38,7 +38,6 @@ const useAuthStore = create((set) => ({
       const payload = decodeJWT(token);
       const userId = payload.id;
       const req = await addToWishlist(userId, productId);
-      console.log(req);
       // set(() => ({ accountInfo: updatedUser }));
     }
   }

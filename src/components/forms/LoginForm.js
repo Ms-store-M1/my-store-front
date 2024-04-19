@@ -24,7 +24,6 @@ const LoginForm = ({ onTyping, onLoginSuccess }) => {
     const isFormValid = Object.values(formData).every(value => value.trim() !== '');
 
     if (isFormValid) {
-      console.log(formData);
       const req = await loginUser(formData);
       // check promise result
       console.log(req);
