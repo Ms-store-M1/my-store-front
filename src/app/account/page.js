@@ -35,6 +35,7 @@ export default function Account() {
     const handleLoginSuccess = (success, data) => {
         if (success) {
             login(data);
+            window.location.reload();
         } else {
             setError(true);
         }
