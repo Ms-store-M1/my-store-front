@@ -12,6 +12,9 @@ import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
 import { addToCart, getCart, updateCartItemQuantity } from "@/services/api/cart.api";
+import { ToastContainer } from "react-toastify";
+import { showToastMessage } from "@/services/toast";
+
 
 export default function Page({ onDelete, isAdmin = false }) {
     const { id } = useParams();
@@ -30,20 +33,20 @@ export default function Page({ onDelete, isAdmin = false }) {
     const [editMode, setEditMode] = useState(false);
     const [originalProduct, setOriginalProduct] = useState(null);
     const [cart, setCart] = useState([]);
-    const [authChecked, setAuthChecked] = useState(false); 
-
+    const [authChecked, setAuthChecked] = useState(false);
+    
     useEffect(() => {
         const fetchLogin = async () => {
             try {
-                await checkLogin(); 
+                await checkLogin();
             } catch (err) {
                 console.log(err);
             } finally {
-                setAuthChecked(true); 
+                setAuthChecked(true);
             }
         };
         fetchLogin();
-    }, []); 
+    }, []);
 
     const fetchCart = async () => {
         try {
@@ -116,7 +119,9 @@ export default function Page({ onDelete, isAdmin = false }) {
     const onWishlist = async (productId) => {
         const req = await addToWishlist(productId);
         setWishlisted(true);
+        showToastMessage(true, 'Produit ajouté à la liste de souhait');
     };
+    
     const handleDelete = () => {
         setShowConfirmation(false); // Hide confirmation message
         onDelete(product?.id); // Call onDelete function
@@ -126,7 +131,7 @@ export default function Page({ onDelete, isAdmin = false }) {
         if (isLogged) {
             try {
                 const existingProduct = cart.find(item => item.productId === product.id);
-    
+
                 if (existingProduct) {
                     const _body = {
                         productId: product.id,
@@ -135,6 +140,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     const response = await updateCartItemQuantity(accountInfo.id, _body);
                     fetchCart();
                     setIsOnCart(true);
+                    showToastMessage(true, 'Produit ajouté au panier');
                     console.log(response);
                 } else {
                     const _body = {
@@ -144,26 +150,28 @@ export default function Page({ onDelete, isAdmin = false }) {
                     const response = await addToCart(accountInfo.id, _body);
                     console.log(response);
                     fetchCart();
+                    showToastMessage(true, 'Produit ajouté au panier');
                     setIsOnCart(true);
                 }
             } catch (error) {
                 console.error("Error adding product to cart:", error);
+                showToastMessage(false);
             }
         } else {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             const existingProduct = cart.find(item => item.productId === product.id);
-    
+
             if (existingProduct) {
-                existingProduct.quantity += 1; 
+                existingProduct.quantity += 1;
             } else {
-                cart.push({ productId: product.id, product, quantity: 1 }); 
+                cart.push({ productId: product.id, product, quantity: 1 });
             }
-    
+
             localStorage.setItem("cart", JSON.stringify(cart));
             console.log("Product added to local cart successfully!");
         }
     };
-    
+
 
     const handleCheckboxChange = () => {
         setIsActive(!isActive); // Toggle product visibility
@@ -317,7 +325,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                                 : "Ajouter au panier"
                         }
                     </Button>
-                    {isLogged ?  <Button
+                    {isLogged ? <Button
                         onClick={() => onWishlist(product.id)}
                         className="transition ease-in-out delay-150 ml-4 mt-4 inline-flex items-center px-4 py-3 text-sm border border-black-500 font-medium text-center text-black-500 bg-white"
                         disabled={wishlisted}
@@ -407,6 +415,7 @@ export default function Page({ onDelete, isAdmin = false }) {
                     )}
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }

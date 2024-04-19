@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import Button from '../UI/Button';
 import useAuthStore from '@/stores/authStore';
 import { updateUser } from '@/services/api/user.api';
+import { ToastContainer } from "react-toastify";
+import { showToastMessage } from "@/services/toast";
+
 
 const Profile = ({ accountInfo }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -28,6 +31,7 @@ const Profile = ({ accountInfo }) => {
       delete accountInfoObject.password;
       delete accountInfoObject.isadmin;
       delete accountInfoObject.wishlist;
+      delete accountInfoObject.commande;
       setUserInfo(accountInfoObject);
     }
   }, [accountInfo])
@@ -51,7 +55,10 @@ const Profile = ({ accountInfo }) => {
     setIsEditing(false);
     // Envoyer les informations mises à jour au backend
     const req = await updateUser(userInfo);
-    console.log(req);
+    if (req) {
+
+      showToastMessage(true, "Profil mis à jour avec succès");
+    }
   };
 
   const handleCancel = () => {
@@ -109,6 +116,7 @@ const Profile = ({ accountInfo }) => {
           </div>
         </form>
       )}
+      <ToastContainer />
     </div>
   );
 };
