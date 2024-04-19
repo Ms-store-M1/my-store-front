@@ -1,7 +1,6 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import Button from '../../UI/Button';
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -17,11 +16,12 @@ import { getBase64 } from "../../../lib/base64";
 import useAuthStore from "@/stores/authStore";
 import Button from "../../../components/UI/Button";
 
-// To do : fetch user and products
+// To do : fetch products
 
 export default function Page({ isAdmin = true }) {
     const { id } = useParams();
     const [order, setOrder] = useState(null);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { isLogged, accountInfo, checkLogin, isBuyer } = useAuthStore();
@@ -45,20 +45,27 @@ export default function Page({ isAdmin = true }) {
     }, []); 
 
     useEffect(() => {
-        const fetchOrder = async () => {
+        const fetchOrderAndUser = async () => {
             setLoading(true);
             try {
                 let order = await getOrder(id);
                 if (order) {
                     setOrder(order);
+
+                    // Fetch user data associated with the order
+                    let user = await getUser(order.userId);
+                    if (user) {
+                        setUser(user.data);
+                    }
                 }
             } catch (err) {
                 setError(err);
             } finally {
+                setLoading(false);
             }
         };
         if (id) {
-            fetchOrder();
+            fetchOrderAndUser();
         }
     }, [id]);
 
