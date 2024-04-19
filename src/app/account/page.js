@@ -28,6 +28,7 @@ export default function Account() {
         if (success) {
             setShowSignup(false);
             login(data);
+            window.location.reload();
         } else {
         }
     };

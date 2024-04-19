@@ -88,8 +88,7 @@ const Profile = ({ accountInfo, key}) => {
             </Button>
             <button onClick={() => 
              { logout()
-              // enlever le admin du navmenu si pas admin
-              menu.splice(2, 1)}
+              window.location.reload();}
             }
               className='transition ease-in-out delay-150 inline-flex items-center px-4 py-3 text-sm border border-red-500 font-medium text-center text-black-500 ${} bg-white'>
               Déconnexion
